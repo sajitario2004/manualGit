@@ -2,7 +2,7 @@
 
 > **Plataforma:** Debian GNU/Linux (11 Bullseye / 12 Bookworm y derivadas como Ubuntu / Linux Mint)  
 > **Shell:** Bash / GNU Coreutils  
-> **Herramientas:** Git 2.40+, GitHub CLI (`gh`), OpenSSH, GnuPG, Libsecret  
+> **Herramientas:** Git 2.40+, GitHub CLI (`gh`), OpenSSH, GnuPG, Libsecret, Git LFS  
 
 ---
 
@@ -10,56 +10,69 @@
 
 1. [Parte I: Fundamentos y Configuración del Entorno en Debian](#parte-i-fundamentos-y-configuración-del-entorno-en-debian)
    - 1.1 [Diferencias entre Git y GitHub](#11-diferencias-entre-git-y-github)
-   - 1.2 [Instalación de Git y GitHub CLI (`gh`) en Debian](#12-instalación-de-git-y-github-cli-gh-en-debian)
+   - 1.2 [Instalación de Git y GitHub CLI en Debian](#12-instalación-de-git-y-github-cli-en-debian)
    - 1.3 [Configuración de Identidad y Finales de Línea](#13-configuración-de-identidad-y-finales-de-línea)
-   - 1.4 [Autenticación Segura: SSH con Ed25519 y GitHub CLI](#14-autenticación-segura-ssh-con-ed25519-y-github-cli)
-   - 1.5 [Gestor de Credenciales en Linux (`libsecret`)](#15-gestor-de-credenciales-en-linux-libsecret)
+   - 1.4 [Autenticación Segura: SSH Ed25519 y GitHub CLI](#14-autenticación-segura-ssh-ed25519-y-github-cli)
+   - 1.5 [Gestor de Credenciales en Linux](#15-gestor-de-credenciales-en-linux)
    - 1.6 [Firma Criptográfica de Commits con GPG y SSH](#16-firma-criptográfica-de-commits-con-gpg-y-ssh)
 2. [Parte II: Flujo de Trabajo Esencial (Nivel Novato)](#parte-ii-flujo-de-trabajo-esencial-nivel-novato)
    - 2.1 [Creación y Clonación de Repositorios](#21-creación-y-clonación-de-repositorios)
    - 2.2 [El Ciclo de Tres Estados: Working Tree, Index y Commit](#22-el-ciclo-de-tres-estados-working-tree-index-y-commit)
    - 2.3 [Staging Selectivo y Convención de Commits](#23-staging-selectivo-y-convención-de-commits)
    - 2.4 [Sincronización con el Repositorio Remoto](#24-sincronización-con-el-repositorio-remoto)
-   - 2.5 [Control de Archivos Ignorados (`.gitignore`)](#25-control-de-archivos-ignorados-gitignore)
+   - 2.5 [Control de Archivos Ignorados](#25-control-de-archivos-ignorados)
 3. [Parte III: Ramas, Fusiones y Estrategias Colaborativas (Nivel Intermedio)](#parte-iii-ramas-fusiones-y-estrategias-colaborativas-nivel-intermedio)
-   - 3.1 [Ciclo de Vida de Ramas (`git switch`, `git branch`)](#31-ciclo-de-vida-de-ramas-git-switch-git-branch)
-   - 3.2 [Los Tres Métodos de Fusión en GitHub (Merge, Squash, Rebase)](#32-los-tres-métodos-de-fusión-en-github-merge-squash-rebase)
+   - 3.1 [Ciclo de Vida de Ramas](#31-ciclo-de-vida-de-ramas)
+   - 3.2 [Los Tres Métodos de Fusión en GitHub](#32-los-tres-métodos-de-fusión-en-github)
    - 3.3 [Modelos de Flujo de Trabajo: GitHub Flow, Git Flow y Forking](#33-modelos-de-flujo-de-trabajo-github-flow-git-flow-y-forking)
-   - 3.4 [Herramientas de Respaldo: `git stash`, `git cherry-pick` y `git rebase -i`](#34-herramientas-de-respaldo-git-stash-git-cherry-pick-y-git-rebase--i)
-   - 3.5 [El Salvavidas: Recuperar Commits y Ramas con `git reflog`](#35-el-salvavidas-recuperar-commits-y-ramas-con-git-reflog)
+   - 3.4 [Herramientas de Respaldo: Stash, Cherry-Pick y Rebase Interactivo](#34-herramientas-de-respaldo-stash-cherry-pick-y-rebase-interactivo)
+   - 3.5 [El Salvavidas: Recuperar Commits y Ramas con Reflog](#35-el-salvavidas-recuperar-commits-y-ramas-con-reflog)
 4. [Parte IV: Soluciones por Temas a la Edición Concurrente del Mismo Archivo](#parte-iv-soluciones-por-temas-a-la-edición-concurrente-del-mismo-archivo)
    - 4.1 [Tema 1: Prevención y Buenas Prácticas de Equipo](#41-tema-1-prevención-y-buenas-prácticas-de-equipo)
-   - 4.2 [Tema 2: Fusión Automática (Cambios en Distintas Líneas)](#42-tema-2-fusión-automática-cambios-en-distintas-líneas)
-   - 4.3 [Tema 3: Conflicto Directo de Fusión (Mismas Líneas)](#43-tema-3-conflicto-directo-de-fusión-mismas-líneas)
-   - 4.4 [Tema 4: Elección Total de Versión (`--ours` vs `--theirs`)](#44-tema-4-elección-total-de-versión---ours-vs---theirs)
-   - 4.5 [Tema 5: Cambios Locales sin Confirmar al hacer Pull (`git stash`)](#45-tema-5-cambios-locales-sin-confirmar-al-hacer-pull-git-stash)
-   - 4.6 [Tema 6: Push Rechazado por Desfase (`non-fast-forward`) y Rebase Seguro](#46-tema-6-push-rechazado-por-desfase-non-fast-forward-y-rebase-seguro)
-   - 4.7 [Tema 7: Resolución de Conflictos en Pull Requests (Web y CLI)](#47-tema-7-resolución-de-conflictos-en-pull-requests-web-y-cli)
+   - 4.2 [Tema 2: Fusión Automática en Distintas Líneas](#42-tema-2-fusión-automática-en-distintas-líneas)
+   - 4.3 [Tema 3: Conflicto Directo de Fusión en Mismas Líneas](#43-tema-3-conflicto-directo-de-fusión-en-mismas-líneas)
+   - 4.4 [Tema 4: Elección Total de Versión](#44-tema-4-elección-total-de-versión)
+   - 4.5 [Tema 5: Cambios Locales sin Confirmar al hacer Pull](#45-tema-5-cambios-locales-sin-confirmar-al-hacer-pull)
+   - 4.6 [Tema 6: Push Rechazado por Desfase y Rebase Seguro](#46-tema-6-push-rechazado-por-desfase-y-rebase-seguro)
+   - 4.7 [Tema 7: Resolución de Conflictos en Pull Requests](#47-tema-7-resolución-de-conflictos-en-pull-requests)
    - 4.8 [Tema 8: Conflicto de Modificación vs Eliminación](#48-tema-8-conflicto-de-modificación-vs-eliminación)
-   - 4.9 [Tema 9: Conflictos en Archivos Binarios y Bloqueo con Git LFS](#49-tema-9-conflictos-en-archivos-binarios-y-bloqueo-con-git-lfs)
-5. [Parte V: Gestión de Proyectos y Ecosistema GitHub](#parte-v-gestión-de-proyectos-y-ecosistema-github)
-   - 5.1 [GitHub Issues, Hitos y Etiquetas desde Terminal](#51-github-issues-hitos-y-etiquetas-desde-terminal)
-   - 5.2 [Pull Requests y Revisiones de Código desde el CLI](#52-pull-requests-y-revisiones-de-código-desde-el-cli)
-   - 5.3 [GitHub Projects (v2): Tableros y Automatización](#53-github-projects-v2-tableros-y-automatización)
-   - 5.4 [GitHub Discussions y Wikis Locales](#54-github-discussions-y-wikis-locales)
-6. [Parte VI: Automatización y CI/CD con GitHub Actions (Nivel Avanzado)](#parte-vi-automatización-y-cicd-con-github-actions-nivel-avanzado)
-   - 6.1 [Estructura y Sintaxis de Workflows](#61-estructura-y-sintaxis-de-workflows)
-   - 6.2 [Pipelines para Debian/Linux: Tests, Linting y Matrices](#62-pipelines-para-debianlinux-tests-linting-y-matrices)
-   - 6.3 [Secretos, Variables de Entorno y Caching](#63-secretos-variables-de-entorno-y-caching)
-   - 6.4 [Configuración de un Self-Hosted Runner en Debian como Servicio Systemd](#64-configuración-de-un-self-hosted-runner-en-debian-como-servicio-systemd)
-7. [Parte VII: Distribución, Paquetes y Publicación](#parte-vii-distribución-paquetes-y-publicación)
-   - 7.1 [GitHub Releases: Tags Semánticos y Binarios `.deb`](#71-github-releases-tags-semánticos-y-binarios-deb)
-   - 7.2 [GitHub Packages: Contenedores en GHCR](#72-github-packages-contenedores-en-ghcr)
-   - 7.3 [GitHub Pages: Despliegue de Sitios Estáticos y Documentación](#73-github-pages-despliegue-de-sitios-estáticos-y-documentación)
-8. [Parte VIII: Seguridad, Gobernanza y Políticas de Repositorio](#parte-viii-seguridad-gobernanza-y-políticas-de-repositorio)
-   - 8.1 [Branch Protection Rules y Rulesets](#81-branch-protection-rules-y-rulesets)
-   - 8.2 [Dependabot, Secret Scanning y Push Protection](#82-dependabot-secret-scanning-y-push-protection)
-   - 8.3 [Análisis Estático con CodeQL (SAST)](#83-análisis-estático-con-codeql-sast)
-   - 8.4 [Gobernanza con `CODEOWNERS` y Permisos](#84-gobernanza-con-codeowners-y-permisos)
-9. [Parte IX: Scripting Avanzado con la API y Diagnóstico](#parte-ix-scripting-avanzado-con-la-api-y-diagnóstico)
-   - 9.1 [Consultas a la API REST y GraphQL con `gh api`](#91-consultas-a-la-api-rest-y-graphql-con-gh-api)
-   - 9.2 [Configuración y Verificación de Webhooks](#92-configuración-y-verificación-de-webhooks)
-   - 9.3 [Diagnóstico y Resolución de Problemas Frecuentes en Debian](#93-diagnóstico-y-resolución-de-problemas-frecuentes-en-debian)
+   - 4.9 [Tema 9: Archivos Binarios y Bloqueo con Git LFS](#49-tema-9-archivos-binarios-y-bloqueo-con-git-lfs)
+5. [Parte V: Herramientas Modernas de Productividad Avanzada](#parte-v-herramientas-modernas-de-productividad-avanzada)
+   - 5.1 [Git Worktrees: Múltiples Ramas en Paralelo sin Conmutar](#51-git-worktrees-múltiples-ramas-en-paralelo-sin-conmutar)
+   - 5.2 [Depuración Binaria de Bugs con Git Bisect y Blame](#52-depuración-binaria-de-bugs-con-git-bisect-y-blame)
+   - 5.3 [GitHub Codespaces y Contenedores de Desarrollo](#53-github-codespaces-y-contenedores-de-desarrollo)
+   - 5.4 [GitHub Copilot en la Terminal con GitHub CLI](#54-github-copilot-en-la-terminal-con-github-cli)
+   - 5.5 [Git Hooks Locales y Automatización con Pre-commit](#55-git-hooks-locales-y-automatización-con-pre-commit)
+6. [Parte VI: Gestión de Proyectos y Ecosistema GitHub](#parte-vi-gestión-de-proyectos-y-ecosistema-github)
+   - 6.1 [GitHub Issues, Hitos y Etiquetas desde Terminal](#61-github-issues-hitos-y-etiquetas-desde-terminal)
+   - 6.2 [Pull Requests y Revisiones de Código desde el CLI](#62-pull-requests-y-revisiones-de-código-desde-el-cli)
+   - 6.3 [GitHub Projects (v2): Tableros y Automatización](#63-github-projects-v2-tableros-y-automatización)
+   - 6.4 [GitHub Discussions y Wikis Locales](#64-github-discussions-y-wikis-locales)
+7. [Parte VII: Automatización y CI/CD con GitHub Actions](#parte-vii-automatización-y-cicd-con-github-actions)
+   - 7.1 [Estructura y Sintaxis de Workflows](#71-estructura-y-sintaxis-de-workflows)
+   - 7.2 [Pipelines para Debian/Linux: Tests, Linting y Matrices](#72-pipelines-para-debianlinux-tests-linting-y-matrices)
+   - 7.3 [Secretos, Variables de Entorno y Caching](#73-secretos-variables-de-entorno-y-caching)
+   - 7.4 [Configuración de un Self-Hosted Runner en Debian](#74-configuración-de-un-self-hosted-runner-en-debian)
+8. [Parte VIII: Distribución, Paquetes y Publicación](#parte-viii-distribución-paquetes-y-publicación)
+   - 8.1 [GitHub Releases: Tags Semánticos y Binarios `.deb`](#81-github-releases-tags-semánticos-y-binarios-deb)
+   - 8.2 [GitHub Packages: Contenedores en GHCR](#82-github-packages-contenedores-en-ghcr)
+   - 8.3 [GitHub Pages: Despliegue de Sitios Estáticos](#83-github-pages-despliegue-de-sitios-estáticos)
+9. [Parte IX: Seguridad, Gobernanza y Políticas de Repositorio](#parte-ix-seguridad-gobernanza-y-políticas-de-repositorio)
+   - 9.1 [Branch Protection Rules y Rulesets](#91-branch-protection-rules-y-rulesets)
+   - 9.2 [Dependabot, Secret Scanning y Push Protection](#92-dependabot-secret-scanning-y-push-protection)
+   - 9.3 [Análisis Estático con CodeQL (SAST)](#93-análisis-estático-con-codeql-sast)
+   - 9.4 [Gobernanza con CODEOWNERS y Permisos](#94-gobernanza-con-codeowners-y-permisos)
+10. [Parte X: Catálogo Maestro de Incidentes y Soluciones en GitHub](#parte-x-catálogo-maestro-de-incidentes-y-soluciones-en-github)
+    - 10.1 [Incidente 1: Fuga Accidental de Secretos o Tokens](#101-incidente-1-fuga-accidental-de-secretos-o-tokens)
+    - 10.2 [Incidente 2: Rechazo de Push por Archivo Mayor a 100 MB](#102-incidente-2-rechazo-de-push-por-archivo-mayor-a-100-mb)
+    - 10.3 [Incidente 3: Reversión Limpia de un Merge Roto en Producción](#103-incidente-3-reversión-limpia-de-un-merge-roto-en-producción)
+    - 10.4 [Incidente 4: Rebase Accidental de una Rama Compartida](#104-incidente-4-rebase-accidental-de-una-rama-compartida)
+    - 10.5 [Incidente 5: Resurrección de una Rama Remota Borrada](#105-incidente-5-resurrección-de-una-rama-remota-borrada)
+    - 10.6 [Incidente 6: Corrección Masiva de Autoría en Commits Antiguos](#106-incidente-6-corrección-masiva-de-autoría-en-commits-antiguos)
+    - 10.7 [Incidente 7: Ataques de Pwn Request en GitHub Actions](#107-incidente-7-ataques-de-pwn-request-en-github-actions)
+    - 10.8 [Incidente 8: Bucle Infinito de Workflows en GitHub Actions](#108-incidente-8-bucle-infinito-de-workflows-en-github-actions)
+    - 10.9 [Incidente 9: Repositorio Gigante y Poda de Objetos Huérfanos](#109-incidente-9-repositorio-gigante-y-poda-de-objetos-huérfanos)
+    - 10.10 [Incidente 10: Conflicto de Etiquetas o Tags Desincronizados](#1010-incidente-10-conflicto-de-etiquetas-o-tags-desincronizados)
 
 ---
 
@@ -72,91 +85,55 @@
 
 ---
 
-## 1.2 Instalación de Git y GitHub CLI (`gh`) en Debian
+## 1.2 Instalación de Git y GitHub CLI en Debian
 
-Debian provee Git en sus repositorios oficiales, pero para interactuar con la plataforma en la nube requerimos GitHub CLI (`gh`).
-
-### Paso 1: Actualizar repositorios e instalar paquetes base
 ```bash
 sudo apt update && sudo apt install -y curl wget git gnupg coreutils
 ```
 > **¿Qué hace este comando?**  
-> Actualiza la lista de paquetes disponibles de Debian e instala herramientas indispensables para descargar claves seguras (`curl`, `wget`), el gestor de versiones (`git`) y el soporte de firmas criptográficas (`gnupg`).
+> Actualiza los índices de APT e instala las dependencias necesarias para gestionar repositorios, firmas y paquetes.
 
-### Paso 2: Descargar el llavero oficial de GitHub CLI
 ```bash
 sudo mkdir -p -m 755 /etc/apt/keyrings
 wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
 sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-```
-> **¿Qué hace este comando?**  
-> Crea el directorio de llaveros seguros de APT y descarga la clave pública oficial de GitHub para verificar criptográficamente que los paquetes que instalemos no hayan sido alterados.
-
-### Paso 3: Registrar el repositorio de GitHub CLI en APT
-```bash
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-```
-> **¿Qué hace este comando?**  
-> Añade el repositorio oficial de GitHub CLI adaptado automáticamente a la arquitectura de tu procesador Debian (`amd64`, `arm64`, etc.).
-
-### Paso 4: Instalar GitHub CLI y verificar versiones
-```bash
 sudo apt update && sudo apt install -y gh
-git --version
-gh --version
 ```
 > **¿Qué hace este comando?**  
-> Descarga e instala el binario `gh` y valida que tanto Git como GitHub CLI estén correctamente instalados y listos para usar en la terminal.
+> Registra la clave criptográfica oficial de GitHub, añade el repositorio oficial a Debian e instala la herramienta oficial de línea de comandos `gh`.
 
 ---
 
 ## 1.3 Configuración de Identidad y Finales de Línea
 
-### Configurar nombre de autor y correo
 ```bash
 git config --global user.name "Tu Nombre Completo"
 git config --global user.email "tu-correo@ejemplo.com"
-```
-> **¿Qué hace este comando?**  
-> Establece la identidad global con la que se firmará la autoría de cada uno de tus commits.
-
-### Configurar saltos de línea y rama inicial
-```bash
 git config --global core.autocrlf input
 git config --global init.defaultBranch main
 git config --global core.editor nano
 ```
 > **¿Qué hace este comando?**  
-> * `core.autocrlf input`: En Linux, asegura que los archivos se guarden en Git estrictamente con saltos de línea Unix **LF** (`\n`), convirtiendo cualquier CRLF que provenga de Windows.  
-> * `init.defaultBranch main`: Establece `main` como el nombre predeterminado de la rama principal.  
-> * `core.editor nano`: Configura el editor de texto interactivo para editar mensajes de commit.
+> Define el autor y correo para cada commit, fija los saltos de línea estrictamente en formato Unix LF (`\n`), configura `main` como rama inicial por omisión y define `nano` como editor de terminal.
 
 ---
 
-## 1.4 Autenticación Segura: SSH con Ed25519 y GitHub CLI
+## 1.4 Autenticación Segura: SSH Ed25519 y GitHub CLI
 
-GitHub no permite contraseñas por HTTPS; la autenticación debe realizarse mediante claves SSH o GitHub CLI.
-
-### Paso 1: Generar clave SSH Ed25519
 ```bash
 ssh-keygen -t ed25519 -C "tu-correo@ejemplo.com" -f ~/.ssh/id_ed25519
-```
-> **¿Qué hace este comando?**  
-> Crea un par de claves criptográficas modernas (privada y pública) mediante la curva elíptica Ed25519, más rápida y segura que RSA.
-
-### Paso 2: Iniciar el agente SSH y cargar la clave
-```bash
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 ```
 > **¿Qué hace este comando?**  
-> Inicia el demonio de fondo `ssh-agent` y carga tu clave privada en memoria para que no tengas que ingresar la contraseña continuamente.
+> Crea una pareja de claves SSH usando la curva elíptica Ed25519 y carga la clave privada en el agente de memoria.
 
-### Paso 3: Configurar persistencia en `~/.ssh/config`
 ```bash
 cat << 'EOF' >> ~/.ssh/config
 Host github.com
-    HostName github.com
+    HostName ssh.github.com
+    Port 443
     User git
     IdentityFile ~/.ssh/id_ed25519
     IdentitiesOnly yes
@@ -164,25 +141,18 @@ EOF
 chmod 600 ~/.ssh/config
 ```
 > **¿Qué hace este comando?**  
-> Indica al cliente SSH de Debian que utilice siempre tu clave `id_ed25519` al conectarse a `github.com` y fija permisos estrictos de lectura (`600`).
+> Configura el acceso SSH a GitHub a través del puerto seguro **443**, previniendo bloqueos en redes que restringen el puerto 22.
 
-### Paso 4: Iniciar sesión y sincronizar clave con GitHub CLI
 ```bash
 gh auth login -p ssh -w
-```
-> **¿Qué hace este comando?**  
-> Inicia un asistente interactivo en el navegador web que autentica tu terminal con GitHub y asocia tu clave SSH pública automáticamente a tu cuenta.
-
-### Paso 5: Probar la conexión SSH
-```bash
 ssh -T git@github.com
 ```
 > **¿Qué hace este comando?**  
-> Establece un canal SSH con GitHub para verificar el éxito de la autenticación (debe responder: *Hi usuario! You've successfully authenticated...*).
+> Autentica tu CLI con GitHub, asocia tu clave SSH pública automáticamente a tu perfil y comprueba la conexión.
 
 ---
 
-## 1.5 Gestor de Credenciales en Linux (`libsecret`)
+## 1.5 Gestor de Credenciales en Linux
 
 ```bash
 sudo apt install -y libsecret-1-0 libsecret-1-dev build-essential
@@ -190,13 +160,11 @@ sudo make --directory=/usr/share/doc/git/contrib/credential/libsecret
 git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
 ```
 > **¿Qué hace este comando?**  
-> Compila e instala el asistente de credenciales nativo de Linux para almacenar tokens de acceso personal de forma cifrada en el llavero de tu sesión.
+> Compila e instala el ayudante de credenciales de GNOME/Linux para almacenar tokens PAT de manera cifrada en tu sesión.
 
 ---
 
 ## 1.6 Firma Criptográfica de Commits con GPG y SSH
-
-GitHub destaca con la insignia **Verified** los commits firmados criptográficamente. Puedes usar directamente tu clave SSH para firmar:
 
 ```bash
 git config --global gpg.format ssh
@@ -205,7 +173,7 @@ git config --global commit.gpgsign true
 git config --global tag.gpgsign true
 ```
 > **¿Qué hace este comando?**  
-> Configura Git para firmar digitalmente cada commit y tag utilizando tu clave pública SSH. Sube esta clave a GitHub bajo **Settings -> SSH and GPG keys -> New Signing Key**.
+> Firma digitalmente cada commit y tag usando tu clave SSH pública para obtener la insignia **Verified** en GitHub.
 
 ---
 
@@ -213,24 +181,22 @@ git config --global tag.gpgsign true
 
 ## 2.1 Creación y Clonación de Repositorios
 
-### Caso A: Crear un repositorio local y publicarlo en GitHub
 ```bash
-mkdir mi-proyecto-debian && cd mi-proyecto-debian
+mkdir mi-proyecto && cd mi-proyecto
 git init
-echo "# Mi Proyecto en Debian" > README.md
+echo "# Mi Proyecto Debian" > README.md
 git add README.md
-git commit -m "docs: inicializar repositorio con README"
-gh repo create mi-proyecto-debian --public --source=. --remote=origin --push
+git commit -m "docs: inicializar repositorio"
+gh repo create mi-proyecto --public --source=. --remote=origin --push
 ```
 > **¿Qué hace este comando?**  
-> Crea la carpeta, inicia el repositorio local (`git init`), genera el archivo `README.md`, crea el primer commit y utiliza `gh repo create` para crear el repositorio remoto en GitHub y subir los cambios inmediatamente.
+> Crea la carpeta, inicializa Git localmente, genera el primer commit y publica el repositorio en GitHub vinculando el remoto en un solo paso.
 
-### Caso B: Clonar un repositorio existente
 ```bash
 git clone git@github.com:usuario/mi-repositorio.git
 ```
 > **¿Qué hace este comando?**  
-> Descarga la copia íntegra del repositorio remoto y su historial a tu máquina Debian a través de SSH.
+> Descarga una réplica completa de un repositorio existente y todo su árbol de commits.
 
 ---
 
@@ -238,21 +204,13 @@ git clone git@github.com:usuario/mi-repositorio.git
 
 ```bash
 git status -s
-```
-> **¿Qué hace este comando?**  
-> Muestra el estado del árbol de trabajo de forma compacta (archivos modificados, añadidos o sin rastrear).
-
-```bash
 git diff
-```
-> **¿Qué hace este comando?**  
-> Compara los cambios presentes en tus archivos en disco contra el área de preparación (staging).
-
-```bash
 git diff --staged
 ```
 > **¿Qué hace este comando?**  
-> Muestra las diferencias exactas de los cambios que ya están en el área de preparación y listos para ser confirmados.
+> * `status -s`: Muestra el estado del árbol de trabajo resumido.  
+> * `diff`: Muestra las diferencias no preparadas en disco.  
+> * `diff --staged`: Muestra las diferencias preparadas en el staging.
 
 ---
 
@@ -262,17 +220,13 @@ git diff --staged
 git add -p archivo.py
 ```
 > **¿Qué hace este comando?**  
-> Abre el modo interactivo por bloques (*hunks*), permitiéndote seleccionar exactamente qué líneas de código enviar al staging y cuáles dejar pendientes.
+> Abre el visor interactivo de bloques (*hunks*) para seleccionar manualmente qué líneas incluir en el commit.
 
-### Estándar Conventional Commits
-| Prefijo | Finalidad | Ejemplo |
-| :--- | :--- | :--- |
-| `feat:` | Incorpora una funcionalidad nueva | `git commit -m "feat: añadir endpoint REST de usuarios"` |
-| `fix:` | Corrige un error o bug | `git commit -m "fix: solucionar pérdida de memoria en parser"` |
-| `docs:` | Modifica documentación | `git commit -m "docs: documentar despliegue en Debian 12"` |
-| `refactor:` | Refactoriza código sin cambio funcional | `git commit -m "refactor: optimizar bucle de procesamiento"` |
-| `test:` | Añade o ajusta pruebas | `git commit -m "test: incorporar prueba unitaria de autenticación"` |
-| `chore:` | Tareas rutinarias de configuración | `git commit -m "chore: actualizar librerías en Makefile"` |
+```bash
+git commit -m "feat(api): implementar endpoint de autenticación"
+```
+> **¿Qué hace este comando?**  
+> Crea un commit estructurado bajo la especificación **Conventional Commits** (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`).
 
 ---
 
@@ -280,149 +234,96 @@ git add -p archivo.py
 
 ```bash
 git fetch origin
-```
-> **¿Qué hace este comando?**  
-> Descarga las ramas y commits nuevos desde GitHub a tu base de datos local sin tocar tus archivos de trabajo.
-
-```bash
 git pull --rebase origin main
-```
-> **¿Qué hace este comando?**  
-> Descarga los últimos cambios de `main` y reaplica tus commits locales encima de ellos, evitando commits de merge innecesarios.
-
-```bash
 git push -u origin main
 ```
 > **¿Qué hace este comando?**  
-> Publica tus commits locales en la rama `main` de GitHub y asocia la rama para futuros envíos simples con solo escribir `git push`.
+> Descarga referencias remotas, incorpora los cambios situando tus commits ordenadamente arriba y los sube a GitHub.
 
 ---
 
-## 2.5 Control de Archivos Ignorados (`.gitignore`)
+## 2.5 Control de Archivos Ignorados
 
-Crea un archivo `.gitignore` en la raíz del proyecto para evitar subir archivos no deseados:
-
-```gitignore
-# Archivos temporales y de compilación
+```bash
+cat << 'EOF' > .gitignore
 *.o
 *.so
 bin/
 *.log
-
-# Caches y entornos virtuales
 __pycache__/
 .venv/
-.cache/
-```
-
-```bash
+EOF
 git rm --cached archivo_sensible.env
 ```
 > **¿Qué hace este comando?**  
-> Remueve un archivo del control de versiones de Git sin borrar el archivo físico de tu disco.
+> Define reglas de exclusión para artefactos y saca del control de versiones archivos rastreados por error sin borrarlos del disco.
 
 ---
 
 # Parte III: Ramas, Fusiones y Estrategias Colaborativas (Nivel Intermedio)
 
-## 3.1 Ciclo de Vida de Ramas (`git switch`, `git branch`)
+## 3.1 Ciclo de Vida de Ramas
 
 ```bash
-git switch -c feature/nueva-autenticacion
-```
-> **¿Qué hace este comando?**  
-> Crea una nueva rama llamada `feature/nueva-autenticacion` y conmuta el directorio de trabajo a ella en un solo paso.
-
-```bash
-git push -u origin feature/nueva-autenticacion
-```
-> **¿Qué hace este comando?**  
-> Publica la rama local en GitHub y establece el seguimiento remoto (*upstream tracking*).
-
-```bash
+git switch -c feature/nueva-funcionalidad
+git push -u origin feature/nueva-funcionalidad
 git switch main
-git branch -d feature/nueva-autenticacion
-git push origin --delete feature/nueva-autenticacion
+git branch -d feature/nueva-funcionalidad
+git push origin --delete feature/nueva-funcionalidad
 ```
 > **¿Qué hace este comando?**  
-> Vuelve a la rama principal, borra la rama local ya integrada (`-d`) y elimina la rama correspondiente en el servidor de GitHub.
+> Crea y conmuta a una rama, la publica en GitHub, regresa a `main`, borra la rama local ya integrada y la elimina en GitHub.
 
 ---
 
-## 3.2 Los Tres Métodos de Fusión en GitHub (Merge, Squash, Rebase)
+## 3.2 Los Tres Métodos de Fusión en GitHub
 
-* **Merge Commit (`git merge --no-ff`):** Une dos ramas preservando todos los commits individuales y crea un commit conmemorativo. Ideal cuando el historial individual de cada commit es valioso.
-* **Squash and Merge:** Comprime todos los commits de la rama en un único commit limpio aplicado sobre la rama destino. Ideal para mantener un árbol principal impecable.
-* **Rebase and Merge:** Aplica uno a uno los commits de la rama al final de `main` sin generar commit de unión. Proporciona una historia estrictamente lineal.
+* **Merge Commit:** Fusión con commit conmemorativo que conserva todo el historial de ramas.
+* **Squash and Merge:** Aplasta todos los commits en uno solo para mantener limpia la rama principal.
+* **Rebase and Merge:** Aplica commits linealmente sin generar commit de unión.
 
 ---
 
 ## 3.3 Modelos de Flujo de Trabajo: GitHub Flow, Git Flow y Forking
 
-### Forking Workflow para Proyectos de Código Abierto
 ```bash
-# 1. Crear el fork y clonarlo localmente
-gh repo fork organizacion/software-libre --clone
-cd software-libre
-
-# 2. Descargar actualizaciones del repositorio original (upstream)
+gh repo fork organizacion/proyecto-upstream --clone
+cd proyecto-upstream
 git fetch upstream
 git switch main
 git merge upstream/main
 git push origin main
 ```
 > **¿Qué hace este comando?**  
-> Crea una copia en tu cuenta de GitHub, la descarga a tu máquina Debian y sincroniza tu rama `main` con las novedades del proyecto original.
+> Crea un fork personal de un proyecto Open Source, lo clona localmente y mantiene sincronizada tu copia con el repositorio original.
 
 ---
 
-## 3.4 Herramientas de Respaldo: `git stash`, `git cherry-pick` y `git rebase -i`
+## 3.4 Herramientas de Respaldo: Stash, Cherry-Pick y Rebase Interactivo
 
 ```bash
-git stash save "Trabajo temporal en módulo de red"
-```
-> **¿Qué hace este comando?**  
-> Guarda tus cambios modificados y sin commitear en una pila temporal y deja tu directorio de trabajo completamente limpio.
-
-```bash
+git stash save "Trabajo preliminar sin terminar"
 git stash pop
-```
-> **¿Qué hace este comando?**  
-> Restaura el último conjunto de cambios guardados en el stash y lo elimina de la pila.
-
-```bash
 git cherry-pick 3a5b7c8
-```
-> **¿Qué hace este comando?**  
-> Aplica un commit específico (identificado por su hash) directamente sobre tu rama actual.
-
-```bash
 git rebase -i HEAD~3
 ```
 > **¿Qué hace este comando?**  
-> Abre un editor interactivo para reescribir, combinar (*squash*), modificar el texto (*reword*) o eliminar los últimos 3 commits locales antes de enviarlos a GitHub.
+> Guarda cambios en el búfer temporal, los restaura, copia un commit específico de otra rama o reescribe interactivamente los últimos 3 commits.
 
 ---
 
-## 3.5 El Salvavidas: Recuperar Commits y Ramas con `git reflog`
+## 3.5 El Salvavidas: Recuperar Commits y Ramas con Reflog
 
 ```bash
 git reflog
-```
-> **¿Qué hace este comando?**  
-> Muestra un registro cronológico exhaustivo de cada cambio que sufrió el puntero `HEAD` en tu máquina (resets, checkouts, commits y rebases).
-
-```bash
 git reset --hard HEAD@{1}
 ```
 > **¿Qué hace este comando?**  
-> Regresa el repositorio de forma exacta al estado previo a un error accidental (como un `git reset --hard` no deseado).
+> Inspecciona el historial de todos los movimientos de `HEAD` en tu máquina y revierte cualquier pérdida accidental a su estado previo.
 
 ---
 
 # Parte IV: Soluciones por Temas a la Edición Concurrente del Mismo Archivo
-
-Uno de los desafíos más comunes en GitHub ocurre cuando **dos personas modifican el mismo archivo dentro de la misma carpeta**. A continuación se detallan todas las soluciones prácticas clasificadas por casos y temas:
 
 ```
                   ESCENARIO DE CONCURRENCIA
@@ -439,359 +340,326 @@ Uno de los desafíos más comunes en GitHub ocurre cuando **dos personas modific
 
 ## 4.1 Tema 1: Prevención y Buenas Prácticas de Equipo
 
-La mejor forma de resolver un conflicto es evitar que ocurra mediante una organización estructurada:
-
-1. **Nunca trabajar directamente sobre la rama `main`:** Cada miembro debe crear una rama específica para su tarea (`git switch -c feature/mi-modulo`).
-2. **Modularización:** Dividir archivos gigantes en módulos más pequeños e independientes.
-3. **Comunicación y Pull Requests tempranos:** Abrir un Pull Request en modo borrador (*Draft PR*) para que el equipo sepa qué archivos están siendo alterados.
-4. **Sincronización frecuente:** Descargar los cambios de `main` con regularidad (`git pull --rebase origin main`) para no acumular semanas de desfase.
+1. **Ramas por funcionalidad:** Prohibir commits directos sobre `main`.
+2. **Modularización:** Fragmentar archivos masivos en módulos pequeños.
+3. **Draft PRs:** Abrir Pull Requests en borrador para visibilizar qué archivos están siendo alterados.
+4. **Sincronizaciones frecuentes:** Ejecutar `git pull --rebase origin main` al iniciar y finalizar la jornada.
 
 ---
 
-## 4.2 Tema 2: Fusión Automática (Cambios en Distintas Líneas)
+## 4.2 Tema 2: Fusión Automática en Distintas Líneas
 
-Si tu compañero modificó el encabezado del archivo y tú editaste el final del mismo archivo, **Git es capaz de combinar los cambios de forma 100% automática**.
+Si las modificaciones ocurrieron en secciones separadas del archivo:
 
-### Procedimiento paso a paso:
 ```bash
-# 1. Descargar e incorporar los cambios del compañero aplicando rebase
 git pull --rebase origin main
-```
-> **¿Qué hace este comando?**  
-> Descarga el commit de tu compañero, coloca temporalmente tus commits en espera, avanza tu rama al estado del compañero y reaplica tus cambios. Al estar en líneas distintas, Git emite el mensaje:  
-> `Auto-merging src/archivo.py`  
-> `Apply: feat: mis modificaciones`
-
-```bash
-# 2. Verificar que el historial quedó limpio y lineal
-git log --oneline -n 5
-
-# 3. Enviar tus cambios a GitHub
 git push origin main
 ```
+> **¿Qué hace este comando?**  
+> Descarga los cambios del compañero y coloca tus commits arriba. Al no haber solapamiento de líneas, Git resuelve la fusión automáticamente.
 
 ---
 
-## 4.3 Tema 3: Conflicto Directo de Fusión (Mismas Líneas)
+## 4.3 Tema 3: Conflicto Directo de Fusión en Mismas Líneas
 
-Ocurre cuando ambos editaron exactamente las mismas líneas de código. Git detiene la operación e inserta delimitadores de conflicto en el archivo:
+Cuando ambos tocaron las mismas líneas, Git añade marcas de conflicto:
 
 ```python
-<<<<<<< HEAD (Versión del repositorio / Tu compañero)
+<<<<<<< HEAD (Tu compañero en GitHub)
 puerto_servicio = 8080
-tiempo_espera = 30
 =======
 puerto_servicio = 9090
-tiempo_espera = 60
->>>>>>> feat: mi-cambio-local (Tu versión local)
+>>>>>>> feat: mi cambio local
 ```
 
-### Procedimiento de resolución paso a paso en Debian:
-
-### Paso 1: Identificar qué archivos están en conflicto
 ```bash
 git status
-```
-> **¿Qué hace este comando?**  
-> Los archivos con conflicto aparecerán bajo el encabezado: `both modified: src/archivo.py`.
-
-### Paso 2: Abrir y editar el archivo en conflicto
-```bash
 nano src/archivo.py
-```
-> **¿Qué hace este comando?**  
-> Abre el archivo para edición manual. Debes:
-> 1. Localizar los marcadores `<<<<<<<`, `=======` y `>>>>>>>`.
-> 2. Dialogar o decidir cuál es el valor correcto (por ejemplo, dejar `puerto_servicio = 9090` y `tiempo_espera = 30`).
-> 3. Borrar completamente las líneas con marcadores de conflicto dejando únicamente el código final limpio.
-> 4. Guardar (`Ctrl + O`, `Enter`) y salir (`Ctrl + X`).
-
-### Paso 3: Marcar el conflicto como resuelto
-```bash
 git add src/archivo.py
+git rebase --continue
+git push origin main
 ```
 > **¿Qué hace este comando?**  
-> Avisa a Git que el archivo ha sido reconciliado y preparado en el área de staging.
+> Identifica los archivos en conflicto, te permite editar y borrar los marcadores `<<<<<<<`, marca el archivo como resuelto con `git add`, continúa el rebase y sube los cambios.
 
-### Paso 4: Concluir la operación
-* **Si estabas en un merge:**
-  ```bash
-  git commit -m "merge: resolver discrepancias en src/archivo.py"
-  git push origin main
-  ```
-* **Si estabas en un rebase:**
-  ```bash
-  git rebase --continue
-  git push origin main
-  ```
-
-> [!TIP]
-> Si en cualquier momento te sientes desorientado y deseas cancelar la operación para volver al estado intacto anterior:
-> ```bash
-> git merge --abort
-> # O bien:
-> git rebase --abort
-> ```
+```bash
+git rebase --abort
+```
+> **¿Qué hace este comando?**  
+> Cancela inmediatamente el proceso de rebase o fusión y devuelve el repositorio a su estado previo al conflicto.
 
 ---
 
-## 4.4 Tema 4: Elección Total de Versión (`--ours` vs `--theirs`)
+## 4.4 Tema 4: Elección Total de Versión
 
-En ocasiones, una de las dos versiones es la correcta en su totalidad y no tiene sentido mezclar línea por línea.
-
-### Opción A: Conservar mi versión completa (descartar la del compañero)
 ```bash
-# Durante un conflicto activo:
+# Conservar mi versión completa y descartar la del compañero:
 git checkout --ours src/archivo.py
-git add src/archivo.py
-git commit -m "resolve: conservar versión local de src/archivo.py"
-git push origin main
-```
-> **¿Qué hace este comando?**  
-> Sobrescribe el archivo en conflicto exactamente con la versión que tú tenías, ignorando los cambios remotos del compañero en ese archivo puntual.
+git add src/archivo.py && git commit -m "resolve: mantener versión local"
 
-### Opción B: Aceptar la versión completa del compañero (descartar la mía)
-```bash
-# Durante un conflicto activo:
+# Aceptar la versión remota del compañero completa:
 git checkout --theirs src/archivo.py
-git add src/archivo.py
-git commit -m "resolve: aceptar versión remota de src/archivo.py"
-git push origin main
+git add src/archivo.py && git commit -m "resolve: aceptar versión remota"
 ```
 > **¿Qué hace este comando?**  
-> Reemplaza el archivo en conflicto con la versión que tu compañero subió a GitHub, descartando tus alteraciones locales en ese archivo.
+> Resuelve el conflicto escogiendo en su totalidad uno de los dos lados sin edición línea por línea.
 
 ---
 
-## 4.5 Tema 5: Cambios Locales sin Confirmar al hacer Pull (`git stash`)
-
-Si intentas hacer `git pull` mientras tienes cambios sin commitear en el mismo archivo que tu compañero subió, Git bloqueará la descarga con el error:  
-`error: Your local changes to the following files would be overwritten by merge`.
-
-### Procedimiento seguro con `git stash`:
+## 4.5 Tema 5: Cambios Locales sin Confirmar al hacer Pull
 
 ```bash
-# 1. Guardar tus cambios pendientes en el stash temporal
-git stash save "Cambios locales en progreso"
-
-# 2. Descargar los cambios que tu compañero subió
+git stash save "Cambios locales en curso"
 git pull --rebase origin main
-
-# 3. Reaplicar tus cambios sobre la nueva base
 git stash pop
 ```
 > **¿Qué hace este comando?**  
-> * `git stash save`: Aparta tus modificaciones no guardadas y deja el directorio de trabajo limpio.  
-> * `git pull --rebase`: Descarga con éxito las actualizaciones de GitHub.  
-> * `git stash pop`: Vuelve a volcar tus cambios. Si coinciden en la misma línea, Git marcará el conflicto para que lo resuelvas con los pasos del Tema 3.
+> Guarda tus modificaciones no confirmadas en la pila temporal, actualiza el repositorio con los cambios remotos y reaplica tus cambios locales.
 
 ---
 
-## 4.6 Tema 6: Push Rechazado por Desfase (`non-fast-forward`) y Rebase Seguro
-
-Si hiciste commit localmente y al intentar hacer `git push` recibes:  
-`! [rejected] main -> main (fetch first) error: failed to push some refs`  
-Significa que tu compañero subió un commit a GitHub antes que tú.
+## 4.6 Tema 6: Push Rechazado por Desfase y Rebase Seguro
 
 ```bash
-# 1. NUNCA fuerces con git push --force (destruirías el trabajo del compañero)
-
-# 2. Traer los cambios del compañero y poner tus commits encima:
+# 1. NUNCA fuerces con push --force (borrarías los commits de tu compañero)
 git pull --rebase origin main
-
-# 3. Si no hay conflictos (o tras resolverlos con git rebase --continue):
 git push origin main
 ```
-
-> [!CAUTION]
-> Ejecutar `git push --force` sobrescribe el repositorio remoto con tu estado local, **borrando irrevocablemente los commits que tu compañero haya subido**. Si alguna vez requieres forzar una rama propia, utiliza siempre `git push --force-with-lease`, que se aborta si alguien más subió cambios que tú aún no has visto.
+> **¿Qué hace este comando?**  
+> Reubica tus commits locales por encima de los que tu compañero acaba de subir a GitHub y publica la rama sin sobrescribir nada.
 
 ---
 
-## 4.7 Tema 7: Resolución de Conflictos en Pull Requests (Web y CLI)
+## 4.7 Tema 7: Resolución de Conflictos en Pull Requests
 
-Cuando dos ramas abiertas en GitHub entran en conflicto sobre el mismo archivo:
-
-### Método A: Desde la interfaz Web de GitHub
-1. Abre el Pull Request en GitHub.
-2. Si existe conflicto, aparecerá el aviso: *This branch has conflicts that must be resolved*.
-3. Haz clic en **Resolve conflicts**.
-4. Edita el archivo directamente en el editor web eliminando los bloques `<<<<<<<` y `>>>>>>>`.
-5. Haz clic en **Mark as resolved** y luego en **Commit merge**.
-
-### Método B: Desde la terminal con GitHub CLI (`gh`)
 ```bash
-# 1. Descargar la rama del Pull Request a tu máquina
 gh pr checkout 25
-
-# 2. Incorporar los últimos cambios de main a la rama del PR
 git fetch origin main
 git merge origin/main
-
-# 3. Resolver los conflictos en los archivos afectados
 nano src/archivo.py
 git add src/archivo.py
-git commit -m "merge: resolver conflictos con rama main"
-
-# 4. Subir la solución a GitHub (el PR se actualizará automáticamente)
+git commit -m "merge: reconciliar conflictos con main"
 git push origin HEAD
 ```
+> **¿Qué hace este comando?**  
+> Descarga la rama del PR localmente con `gh`, incorpora `main`, resuelve conflictos y actualiza el PR en GitHub.
 
 ---
 
 ## 4.8 Tema 8: Conflicto de Modificación vs Eliminación
 
-Ocurre cuando una persona modificó el archivo y la otra persona lo eliminó del repositorio.
-
-Al hacer `git pull`, `git status` mostrará:  
-`CONFLICT (modify/delete): src/archivo.py deleted in origin and modified in HEAD`.
-
-### Opción 1: Deseas conservar el archivo (rechazar la eliminación)
 ```bash
-git add src/archivo.py
-git commit -m "resolve: conservar src/archivo.py frente a eliminación"
-```
+# Para conservar el archivo frente a la eliminación:
+git add src/archivo.py && git commit -m "resolve: conservar archivo modificado"
 
-### Opción 2: Deseas confirmar la eliminación (aceptar el borrado)
-```bash
-git rm src/archivo.py
-git commit -m "resolve: confirmar eliminación de src/archivo.py"
+# Para confirmar la eliminación:
+git rm src/archivo.py && git commit -m "resolve: confirmar borrado de archivo"
 ```
+> **¿Qué hace este comando?**  
+> Resuelve situaciones donde un usuario modificó el archivo y otro lo borró.
 
 ---
 
-## 4.9 Tema 9: Conflictos en Archivos Binarios y Bloqueo con Git LFS
+## 4.9 Tema 9: Archivos Binarios y Bloqueo con Git LFS
 
-Los archivos binarios (imágenes `.png`, archivos comprimidos `.zip`, ejecutables, bases de datos SQLite o documentos de diseño) no contienen texto plano y **no pueden fusionarse línea a línea**.
-
-### Caso A: Resolver conflicto binario eligiendo versión
-```bash
-# Quedarse con la imagen local
-git checkout --ours assets/logo.png
-git add assets/logo.png
-git commit -m "resolve: conservar logo local"
-
-# O quedarse con la imagen remota del compañero
-git checkout --theirs assets/logo.png
-git add assets/logo.png
-git commit -m "resolve: aceptar logo remoto del compañero"
-```
-
-### Caso B: Prevenir la edición concurrente con bloqueo (Git LFS Lock)
-Instala Git LFS en Debian:
 ```bash
 sudo apt install -y git-lfs && git lfs install
-```
-
-Configura un tipo de archivo para que soporte bloqueo exclusivo:
-```bash
 git lfs track "*.psd" --lockable
-git add .gitattributes
-git commit -m "chore: habilitar bloqueo exclusivo en archivos PSD"
-git push origin main
-```
-
-Cuando vayas a editar el archivo, bloquéalo para que nadie más pueda subir cambios sobre él:
-```bash
-# Bloquear archivo antes de empezar a trabajar
 git lfs lock assets/diseno.psd
-
-# Comprobar quién tiene bloqueado el archivo
 git lfs locks
-
-# Tras terminar y hacer push, liberar el bloqueo
 git lfs unlock assets/diseno.psd
 ```
+> **¿Qué hace este comando?**  
+> Activa el bloqueo exclusivo de archivos en GitHub para impedir que dos personas editen un archivo binario a la vez.
 
 ---
 
-# Parte V: Gestión de Proyectos y Ecosistema GitHub
+# Parte V: Herramientas Modernas de Productividad Avanzada
 
-## 5.1 GitHub Issues, Hitos y Etiquetas desde Terminal
+## 5.1 Git Worktrees: Múltiples Ramas en Paralelo sin Conmutar
+
+Git Worktrees permite tener múltiples ramas extraídas simultáneamente en carpetas independientes en disco sin usar `git stash` ni conmutar ramas en el directorio principal:
+
+```bash
+# Crear un worktree paralelo para una corrección urgente en ../hotfix-login
+git worktree add ../hotfix-login hotfix/login-bug
+cd ../hotfix-login
+
+# Realizar cambios y commitear en paralelo
+git commit -am "fix: resolver problema de sesión"
+git push origin hotfix/login-bug
+
+# Regresar al proyecto principal y eliminar el worktree al terminar
+cd ../mi-proyecto
+git worktree list
+git worktree remove ../hotfix-login
+```
+> **¿Qué hace este comando?**  
+> Asocia una rama diferente a una carpeta física paralela sin tocar tu directorio de trabajo actual.
+
+---
+
+## 5.2 Depuración Binaria de Bugs con Git Bisect y Blame
+
+Cuando descubres un error en producción y no sabes qué commit lo introdujo:
+
+```bash
+# Iniciar búsqueda binaria
+git bisect start
+git bisect bad                 # La versión actual contiene el error
+git bisect good v1.0.0         # El tag v1.0.0 funcionaba correctamente
+
+# Git conmutará automáticamente a commits intermedios para que pruebes
+# Tras probar cada commit, ejecutas:
+git bisect good                # O: git bisect bad
+
+# Al terminar, Git te indicará el commit exacto causante. Finaliza con:
+git bisect reset
+```
+> **¿Qué hace este comando?**  
+> Ejecuta una búsqueda binaria algorítmica sobre el historial de commits para aislar el commit culpable en segundos.
+
+```bash
+git blame -L 40,60 src/servidor.py
+```
+> **¿Qué hace este comando?**  
+> Muestra línea por línea quién fue el autor del último cambio entre las líneas 40 y 60, junto con el hash del commit y la fecha.
+
+---
+
+## 5.3 GitHub Codespaces y Contenedores de Desarrollo
+
+Configura entornos de desarrollo inmediatos y reproducibles en la nube de GitHub mediante `.devcontainer/devcontainer.json`:
+
+```json
+{
+  "name": "Debian Linux Dev Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-azuretools.vscode-docker", "eamodio.gitlens"]
+    }
+  }
+}
+```
+
+```bash
+# Iniciar o conectar a un Codespace desde Debian con GitHub CLI
+gh codespace create --repo usuario/mi-proyecto --branch main
+gh codespace list
+gh codespace code -c nombre-del-codespace
+```
+> **¿Qué hace este comando?**  
+> Despliega una máquina virtual en la infraestructura de GitHub configurada con tus herramientas y la abre en tu terminal o editor.
+
+---
+
+## 5.4 GitHub Copilot en la Terminal con GitHub CLI
+
+```bash
+# Instalar la extensión oficial de Copilot para gh
+gh extension install github/gh-copilot
+
+# Solicitar sugerencias de comandos de terminal
+gh copilot suggest "listar procesos que más memoria consumen en Debian"
+
+# Pedir explicación de un comando complejo
+gh copilot explain "iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080"
+```
+> **¿Qué hace este comando?**  
+> Integra inteligencia artificial generativa dentro de Bash para generar comandos o explicar sintaxis complejas de Linux.
+
+---
+
+## 5.5 Git Hooks Locales y Automatización con Pre-commit
+
+```bash
+sudo apt install -y python3-pip
+pip install pre-commit --break-system-packages
+
+cat << 'EOF' > .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=5000']
+      - id: detect-private-key
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+EOF
+
+pre-commit install
+```
+> **¿Qué hace este comando?**  
+> Instala ganchos automáticos que interceptan cada `git commit`, bloqueando la confirmación si detecta claves privadas o archivos mayores a 5 MB.
+
+---
+
+# Parte VI: Gestión de Proyectos y Ecosistema GitHub
+
+## 6.1 GitHub Issues, Hitos y Etiquetas desde Terminal
 
 ```bash
 gh issue create --title "Fallo en parseo de JSON" --body "El sistema falla con cadenas vacías." --label "bug,debian"
-```
-> **¿Qué hace este comando?**  
-> Crea una incidencia en GitHub con título, cuerpo y etiquetas sin salir de la terminal.
-
-```bash
 gh issue list --assignee "@me"
-```
-> **¿Qué hace este comando?**  
-> Lista todas las tareas e issues abiertos asignados a tu usuario.
-
-```bash
 gh issue close 42 --reason "completed"
 ```
 > **¿Qué hace este comando?**  
-> Marca el issue número 42 como resuelto y lo cierra formalmente.
+> Crea, audita y cierra incidencias formales vinculadas al repositorio desde la consola de Debian.
 
 ---
 
-## 5.2 Pull Requests y Revisiones de Código desde el CLI
+## 6.2 Pull Requests y Revisiones de Código desde el CLI
 
 ```bash
 gh pr create --title "feat: integración con systemd" --body "Automatiza el arranque del servicio." --draft
-```
-> **¿Qué hace este comando?**  
-> Abre un nuevo Pull Request en modo borrador (*Draft*) desde tu rama actual hacia `main`.
-
-```bash
 gh pr checkout 15
-```
-> **¿Qué hace este comando?**  
-> Descarga automáticamente la rama del PR #15 a tu máquina Debian para que puedas compilarla y probarla localmente.
-
-```bash
 gh pr review 15 --approve -b "Validado en Debian 12 sin fallos."
 ```
 > **¿Qué hace este comando?**  
-> Emite una aprobación oficial en el Pull Request con un comentario de verificación.
+> Crea un Pull Request en borrador, descarga la rama de un compañero a tu equipo y emite una aprobación oficial.
 
 ---
 
-## 5.3 GitHub Projects (v2): Tableros y Automatización
+## 6.3 GitHub Projects (v2): Tableros y Automatización
 
 ```bash
 gh project list
-```
-> **¿Qué hace este comando?**  
-> Lista los proyectos y tableros interactivos asociados a tu cuenta u organización.
-
-```bash
 gh project item-add 3 --owner "mi-organizacion" --url "https://github.com/usuario/repo/issues/42"
 ```
 > **¿Qué hace este comando?**  
-> Vincula el issue #42 al tablero Kanban del proyecto #3.
+> Gestiona tableros Kanban interactivos y asocia tareas automáticamente.
 
 ---
 
-## 5.4 GitHub Discussions y Wikis Locales
+## 6.4 GitHub Discussions y Wikis Locales
 
 ```bash
 git clone git@github.com:usuario/mi-proyecto-debian.wiki.git
 cd mi-proyecto-debian.wiki
 echo "## Especificaciones de Arquitectura" >> Home.md
-git commit -am "docs: expandir wiki técnica"
-git push origin master
+git commit -am "docs: expandir wiki técnica" && git push origin master
 ```
 > **¿Qué hace este comando?**  
-> Clona la documentación wiki de GitHub como un repositorio Git local, añade contenido y sincroniza los cambios en la nube.
+> Clona la documentación Wiki de GitHub como un repositorio Git local, añade contenido y la publica.
 
 ---
 
-# Parte VI: Automatización y CI/CD con GitHub Actions (Nivel Avanzado)
+# Parte VII: Automatización y CI/CD con GitHub Actions
 
-## 6.1 Estructura y Sintaxis de Workflows
+## 7.1 Estructura y Sintaxis de Workflows
 
-Los archivos de flujo de trabajo se alojan en `.github/workflows/*.yml` y se ejecutan ante eventos como `push` o `pull_request`.
+Definidos en `.github/workflows/*.yml` para compilar, auditar y desplegar código ante eventos de Git.
 
 ---
 
-## 6.2 Pipelines para Debian/Linux: Tests, Linting y Matrices
+## 7.2 Pipelines para Debian/Linux: Tests, Linting y Matrices
 
-Crea el archivo `.github/workflows/debian-ci.yml`:
+Crea `.github/workflows/debian-ci.yml`:
 
 ```yaml
 name: Debian Linux CI Pipeline
@@ -827,12 +695,10 @@ jobs:
           pip install flake8 pytest
 
       - name: Ejecutar análisis estático (Linting)
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Ejecutar pruebas unitarias
-        run: |
-          pytest --junitxml=reports/test-results-${{ matrix.python-version }}.xml
+        run: pytest --junitxml=reports/test-results-${{ matrix.python-version }}.xml
 
       - name: Subir reporte de pruebas como artefacto
         uses: actions/upload-artifact@v4
@@ -844,9 +710,7 @@ jobs:
 
 ---
 
-## 6.3 Secretos, Variables de Entorno y Caching
-
-Configura tus credenciales en **Settings -> Secrets and variables -> Actions** y accede a ellas de forma cifrada:
+## 7.3 Secretos, Variables de Entorno y Caching
 
 ```yaml
 - name: Despliegue seguro a servidor Debian
@@ -860,119 +724,73 @@ Configura tus credenciales en **Settings -> Secrets and variables -> Actions** y
 
 ---
 
-## 6.4 Configuración de un Self-Hosted Runner en Debian como Servicio Systemd
-
-Si cuentas con tu propio servidor físico o VPS Debian para ejecutar pipelines privados:
+## 7.4 Configuración de un Self-Hosted Runner en Debian
 
 ```bash
-# 1. Crear usuario dedicado y directorio
 sudo adduser --disabled-password --gecos "" actions-runner
 sudo usermod -aG docker actions-runner
 sudo su - actions-runner
 mkdir actions-runner && cd actions-runner
-
-# 2. Descargar el binario oficial del runner para Linux x64
 curl -o actions-runner-linux-x64-2.316.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.316.0/actions-runner-linux-x64-2.316.0.tar.gz
 tar xzf ./actions-runner-linux-x64-2.316.0.tar.gz
-
-# 3. Registrar con el token provisto por GitHub
 ./config.sh --url https://github.com/usuario/repo --token TU_TOKEN_AQUI
-
-# 4. Instalar y arrancar como servicio del sistema (Systemd)
 sudo ./svc.sh install actions-runner
 sudo ./svc.sh start
 sudo ./svc.sh status
 ```
+> **¿Qué hace este comando?**  
+> Convierte tu servidor Debian en un ejecutor privado de GitHub Actions registrado como servicio Systemd.
 
 ---
 
-# Parte VII: Distribución, Paquetes y Publicación
+# Parte VIII: Distribución, Paquetes y Publicación
 
-## 7.1 GitHub Releases: Tags Semánticos y Binarios `.deb`
+## 8.1 GitHub Releases: Tags Semánticos y Binarios `.deb`
 
 ```bash
-# 1. Crear y subir un tag firmado
 git tag -a v1.0.0 -m "release: versión 1.0.0 estable"
 git push origin v1.0.0
-
-# 2. Publicar la Release y adjuntar el paquete instalable de Debian
-gh release create v1.0.0 ./dist/mi-app_1.0.0_amd64.deb \
-  --title "Versión 1.0.0 para Debian" \
-  --generate-notes
+gh release create v1.0.0 ./dist/mi-app_1.0.0_amd64.deb --title "Versión 1.0.0 para Debian" --generate-notes
 ```
 > **¿Qué hace este comando?**  
-> Crea una publicación oficial en GitHub vinculada al tag `v1.0.0`, genera automáticamente las notas de la versión a partir de los PRs fusionados y adjunta el paquete instalable `.deb`.
+> Publica formalmente una nueva versión de software en GitHub y adjunta el paquete instalable para Debian.
 
 ---
 
-## 7.2 GitHub Packages: Contenedores en GHCR
+## 8.2 GitHub Packages: Contenedores en GHCR
 
 ```bash
-# Iniciar sesión en el registro con un PAT con alcance 'write:packages'
 echo $CR_PAT | docker login ghcr.io -u TU_USUARIO --password-stdin
-
-# Construir y subir imagen Docker
 docker build -t ghcr.io/tu-usuario/mi-app:1.0.0 .
 docker push ghcr.io/tu-usuario/mi-app:1.0.0
 ```
+> **¿Qué hace este comando?**  
+> Publica imágenes Docker en el registro de contenedores de GitHub.
 
 ---
 
-## 7.3 GitHub Pages: Despliegue de Sitios Estáticos y Documentación
+## 8.3 GitHub Pages: Despliegue de Sitios Estáticos
 
-Configura `.github/workflows/pages.yml` para desplegar portales generados (por ejemplo con MkDocs, VitePress o Astro):
-
-```yaml
-name: Desplegar a GitHub Pages
-
-on:
-  push:
-    branches: [ main ]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: './site'
-      - id: deployment
-        uses: actions/deploy-pages@v4
-```
+Permite alojar portales estáticos y sitios de documentación con despliegue automático mediante GitHub Actions.
 
 ---
 
-# Parte VIII: Seguridad, Gobernanza y Políticas de Repositorio
+# Parte IX: Seguridad, Gobernanza y Políticas de Repositorio
 
-## 8.1 Branch Protection Rules y Rulesets
+## 9.1 Branch Protection Rules y Rulesets
 
 Desde **Settings -> Rules -> Rulesets**:
-* **Require a pull request before merging:** Impide que cualquier colaborador suba cambios directos a `main`.
-* **Require approvals:** Exige que al menos un revisor apruebe el código.
-* **Require status checks to pass:** Garantiza que los tests de GitHub Actions terminen en verde antes de permitir la fusión.
-* **Block force pushes:** Prohíbe reescribir la historia remota con `push --force`.
+* Prohibir commits directos a `main`.
+* Requerir revisiones aprobadas obligatorias.
+* Exigir que los pipelines de pruebas pasen satisfactoriamente.
+* Bloquear force-pushes (`git push --force`).
 
 ---
 
-## 8.2 Dependabot, Secret Scanning y Push Protection
-
-Crea el archivo `.github/dependabot.yml`:
+## 9.2 Dependabot, Secret Scanning y Push Protection
 
 ```yaml
+# .github/dependabot.yml
 version: 2
 updates:
   - package-ecosystem: "pip"
@@ -982,108 +800,212 @@ updates:
     open-pull-requests-limit: 5
 ```
 
-> [!IMPORTANT]
-> **Push Protection** viene activo por defecto. Si intentas hacer commit de una clave privada, token de API o contraseña, GitHub rechazará el `git push` en el servidor antes de recibir los datos.
+---
+
+## 9.3 Análisis Estático con CodeQL (SAST)
+
+Escaneo automatizado de vulnerabilidades de código fuente integrado directamente en cada Pull Request.
 
 ---
 
-## 8.3 Análisis Estático con CodeQL (SAST)
-
-Activa el análisis de seguridad desde **Settings -> Code security and analysis -> CodeQL analysis**. CodeQL inspecciona cada Pull Request buscando fallos de seguridad (inyecciones SQL, problemas de memoria, validaciones nulas) antes de pasar a producción.
-
----
-
-## 8.4 Gobernanza con `CODEOWNERS` y Permisos
-
-Crea `.github/CODEOWNERS`:
+## 9.4 Gobernanza con `CODEOWNERS` y Permisos
 
 ```
-# Mantenimiento global
+# .github/CODEOWNERS
 * @mi-organizacion/tech-leads
-
-# Empaquetado Debian
 /debian/ @usuario-debian-maintainer
-Makefile @usuario-debian-maintainer
-
-# Workflows de CI/CD
 /.github/workflows/ @mi-organizacion/devops-team
 ```
 
 ---
 
-# Parte IX: Scripting Avanzado con la API y Diagnóstico
+# Parte X: Catálogo Maestro de Incidentes y Soluciones en GitHub
 
-## 9.1 Consultas a la API REST y GraphQL con `gh api`
-
-```bash
-gh api user/repos --paginate | jq '.[].name'
-```
-> **¿Qué hace este comando?**  
-> Consulta la API REST de GitHub para obtener todos los repositorios de tu cuenta paginados y extrae solo sus nombres con `jq`.
-
-```bash
-gh api --method POST repos/:owner/:repo/labels \
-  -f name="debian-package" \
-  -f color="d70a53" \
-  -f description="Tareas sobre empaquetado Debian"
-```
-> **¿Qué hace este comando?**  
-> Crea una nueva etiqueta personalizada directamente en el repositorio remoto usando el método HTTP POST.
+En entornos reales de producción, ocurren incidentes críticos que van más allá del flujo habitual. Esta sección cataloga las 10 situaciones más delicadas y su solución definitiva:
 
 ---
 
-## 9.2 Configuración y Verificación de Webhooks
+## 10.1 Incidente 1: Fuga Accidental de Secretos o Tokens
 
-Script receptor en Python (Debian) con validación criptográfica HMAC-SHA256:
+**Escenario:** Hiciste commit y push a GitHub de un archivo `.env` o script con una clave de API, contraseña o clave privada SSH.
 
-```python
-import hmac
-import hashlib
-from flask import Flask, request, abort
+> [!CAUTION]
+> **REGLA DE ORO:** Una vez que un secreto llega a GitHub, **debes considerarlo inmediatamente comprometido**. Aunque lo borres en un commit posterior, permanece accesible en el historial y en los forks.
 
-app = Flask(__name__)
-SECRET = b"mi_clave_secreta_webhook"
-
-@app.route("/webhook", methods=["POST"])
-def github_webhook():
-    signature_header = request.headers.get("X-Hub-Signature-256")
-    if not signature_header:
-        abort(403)
-    
-    hash_type, signature = signature_header.split("=")
-    computed = hmac.new(SECRET, request.data, hashlib.sha256).hexdigest()
-    
-    if not hmac.compare_digest(signature, computed):
-        abort(403)
-        
-    event = request.headers.get("X-GitHub-Event")
-    print(f"Evento recibido de GitHub: {event}")
-    return "OK", 200
-
-if __name__ == "__main__":
-    app.run(port=5000)
-```
+### Protocolo de remediación inmediata:
+1. **Revocar y rotar el secreto:** Acude al proveedor (AWS, Stripe, OpenAI, etc.) y revoca inmediatamente la clave comprometida antes de tocar Git.
+2. **Purgar el archivo del historial completo:**
+   Instala `git-filter-repo` en Debian:
+   ```bash
+   sudo apt install -y git-filter-repo
+   git filter-repo --path archivo_sensible.env --invert-paths --force
+   ```
+   > **¿Qué hace este comando?**  
+   > Reescribe cada commit del historial eliminando cualquier rastro del archivo sensible de la base de datos de Git.
+3. **Forzar la sincronización segura:**
+   ```bash
+   git push origin --force --all
+   git push origin --force --tags
+   ```
 
 ---
 
-## 9.3 Diagnóstico y Resolución de Problemas Frecuentes en Debian
+## 10.2 Incidente 2: Rechazo de Push por Archivo Mayor a 100 MB
 
-### 1. `Permission denied (publickey)`
-* **Solución:** Comprueba que tu clave SSH esté cargada y validada:
-  ```bash
-  eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519
-  ssh -vT git@github.com
-  ```
+**Escenario:** GitHub rechaza el push con el error:  
+`remote: error: File dataset.zip is 120.00 MB; this exceeds GitHub's file size limit of 100.00 MB`.
 
-### 2. `fatal: refusing to merge unrelated histories`
-* **Solución:** Ocurre al intentar unir dos repositorios creados de forma independiente:
-  ```bash
-  git pull origin main --allow-unrelated-histories
-  ```
+```bash
+# Caso A: El archivo está en el commit más reciente (aún no pusheado con éxito)
+git reset --soft HEAD~1
+git rm --cached dataset.zip
+echo "dataset.zip" >> .gitignore
+git commit -m "docs: reconstruir commit sin archivo pesado"
+git push origin main
+```
 
-### 3. Normalizar saltos de línea de forma retroactiva (CRLF a LF)
-* **Solución:**
-  ```bash
-  git add --renormalize .
-  git commit -m "chore: normalizar saltos de línea a formato Unix LF"
-  ```
+```bash
+# Caso B: El archivo quedó atrapado en commits anteriores del historial local
+git filter-repo --strip-blobs-bigger-than 100M --force
+git push origin main
+```
+> **¿Qué hace este comando?**  
+> Elimina automáticamente cualquier objeto mayor a 100 MB de todo el historial local para que GitHub acepte el push.
+
+---
+
+## 10.3 Incidente 3: Reversión Limpia de un Merge Roto en Producción
+
+**Escenario:** Se fusionó un Pull Request a `main` y provocó una caída en producción. No puedes hacer `git reset` porque alterarías el historial de todos los colaboradores.
+
+```bash
+# Localizar el hash del commit de merge
+git log --oneline -n 5
+
+# Revertir el commit de merge indicando la rama padre principal (-m 1)
+git revert -m 1 HASH_DEL_MERGE -m "revert: revertir merge defectuoso de feature/login"
+git push origin main
+```
+> **¿Qué hace este comando?**  
+> Crea un nuevo commit que anula exactamente las modificaciones introducidas por el merge, preservando la continuidad del árbol y solucionando la emergencia al instante.
+
+---
+
+## 10.4 Incidente 4: Rebase Accidental de una Rama Compartida
+
+**Escenario:** Un compañero ejecutó `git rebase` sobre una rama que varios miembros estaban utilizando y forzó el push, desalineando los clones de todos los demás.
+
+### Solución para los demás miembros del equipo:
+```bash
+# 1. Traer las referencias del servidor sin mezclar
+git fetch origin
+
+# 2. Situar la rama local sobre la rama remota reescrita sin duplicar commits
+git switch rama-afectada
+git rebase --onto origin/rama-afectada @{upstream}
+```
+> **¿Qué hace este comando?**  
+> Identifica los commits propios que aún no estaban en el rebase del compañero y los traslada limpiamente sobre la nueva base, evitando commits duplicados.
+
+---
+
+## 10.5 Incidente 5: Resurrección de una Rama Remota Borrada
+
+**Escenario:** Alguien eliminó una rama importante en GitHub mediante la interfaz web o con `git push origin --delete rama-vital`.
+
+```bash
+# 1. Si algún miembro tenía la rama localmente:
+git switch rama-vital
+git push -u origin rama-vital
+
+# 2. Si la rama fue borrada incluso de tu máquina local, busca el último commit en reflog:
+git reflog | grep "rama-vital"
+# Identifica el hash, por ejemplo 9a8b7c6
+
+# 3. Resucitar la rama a partir del commit localizado:
+git switch -c rama-vital 9a8b7c6
+git push -u origin rama-vital
+```
+> **¿Qué hace este comando?**  
+> Reconstruye la rama exactamente en el estado del último commit antes de ser borrada y la vuelve a publicar en GitHub.
+
+---
+
+## 10.6 Incidente 6: Corrección Masiva de Autoría en Commits Antiguos
+
+**Escenario:** Realizaste decenas de commits con un correo personal o erróneo (`usuario@localhost`) y GitHub no los vincula a tus estadísticas de contribución.
+
+```bash
+git filter-repo --email-callback '
+return email.replace(b"correo_viejo@ejemplo.com", b"correo_nuevo@ejemplo.com")
+' --force
+git push origin --force --all
+```
+> **¿Qué hace este comando?**  
+> Reescribe todos los commits históricos sustituyendo el correo electrónico antiguo por el verificado en tu cuenta de GitHub.
+
+---
+
+## 10.7 Incidente 7: Ataques de Pwn Request en GitHub Actions
+
+**Escenario:** Un atacante envía un Pull Request desde un fork malicioso intentando ejecutar código que lea tus secretos de producción.
+
+### Medidas de seguridad y configuración obligatoria:
+1. En GitHub acude a **Settings -> Actions -> General -> Fork pull request workflows**.
+2. Selecciona **Require approval for all outside collaborators**.
+3. **NUNCA utilices el evento `pull_request_target`** para ejecutar código extraído del checkout del PR si ese workflow tiene acceso a secretos sensibles. Utiliza siempre el evento estándar `pull_request` (que se ejecuta sin acceso a secretos de entorno).
+
+---
+
+## 10.8 Incidente 8: Bucle Infinito de Workflows en GitHub Actions
+
+**Escenario:** Tienes un workflow de formateo o linting que hace `git commit` y `git push` automáticamente, provocando que el push dispare de nuevo el workflow indefinidamente consumiendo tus minutos de CI.
+
+### Solución: Añadir `[skip ci]` al mensaje del commit automatizado:
+```yaml
+- name: Guardar formateo automático
+  run: |
+    git config user.name "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+    git add .
+    git diff-index --quiet HEAD || git commit -m "style: auto-formateo de código [skip ci]"
+    git push
+```
+> **¿Qué hace este comando?**  
+> La etiqueta `[skip ci]` en el mensaje le indica al motor de GitHub Actions que ignore ese push específico y no vuelva a desencadenar el pipeline.
+
+---
+
+## 10.9 Incidente 9: Repositorio Gigante y Poda de Objetos Huérfanos
+
+**Escenario:** Tu repositorio tarda demasiado en clonarse porque acumula años de referencias y objetos huérfanos en la base de datos de Git.
+
+```bash
+# 1. Comprobar el tamaño real de los objetos en disco
+git count-objects -vH
+
+# 2. Purgar referencias expiradas del reflog
+git reflog expire --expire=now --all
+
+# 3. Compactar agresivamente la base de datos de objetos
+git gc --prune=now --aggressive
+```
+> **¿Qué hace este comando?**  
+> Empaqueta y optimiza los árboles de objetos de `.git`, eliminando archivos colgantes y reduciendo significativamente el peso del repositorio.
+
+---
+
+## 10.10 Incidente 10: Conflicto de Etiquetas o Tags Desincronizados
+
+**Escenario:** Alguien movió o recreó una etiqueta de versión en GitHub y al hacer `git pull` recibes:  
+`fatal: tag 'v1.0.0' already exists`.
+
+```bash
+# 1. Purgar todas las etiquetas locales desincronizadas
+git tag -d $(git tag -l)
+
+# 2. Descargar las etiquetas oficiales y actualizadas directamente de GitHub
+git fetch --tags --prune origin
+```
+> **¿Qué hace este comando?**  
+> Limpia la caché local de etiquetas y fuerza la descarga limpia de los tags tal como existen en GitHub.
