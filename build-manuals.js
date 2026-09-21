@@ -515,8 +515,18 @@ function compileManual({ mdPath, pdfPath, osBadge, accentColor, accentLight, bgC
   const tempHtmlPath = mdPath.replace('.md', '.temp.html');
   fs.writeFileSync(tempHtmlPath, htmlContent, 'utf8');
 
+  function getChromeBin() {
+    if (process.env.CHROME_BIN) return process.env.CHROME_BIN;
+    if (process.platform === 'darwin') {
+      return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    } else if (process.platform === 'win32') {
+      return 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+    }
+    return 'google-chrome';
+  }
+
   console.log(`Generating PDF: ${pdfPath}`);
-  const chromeBin = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  const chromeBin = getChromeBin();
   const cmd = `"${chromeBin}" --headless=new --disable-gpu --no-pdf-header-footer --print-to-pdf="${pdfPath}" "${tempHtmlPath}"`;
   
   execSync(cmd, { stdio: 'pipe' });

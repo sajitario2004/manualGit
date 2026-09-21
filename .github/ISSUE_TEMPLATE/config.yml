@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Preguntas y Discusiones de la Comunidad
+    url: https://github.com/sajitario2004/manualGit/discussions
+    about: Haz preguntas, comparte experiencias o pide ayuda sobre flujos de Git o Unity.

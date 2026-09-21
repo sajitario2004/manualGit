@@ -1,0 +1,40 @@
+name: 🐛 Reportar error o errata en un manual
+description: Notificar un comando roto, enlace desactualizado o errata conceptual en un manual.
+title: "[BUG]: "
+labels: ["documentation", "bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por ayudar a mantener la máxima calidad técnica de estos manuales. Completa la información a continuación.
+  - type: dropdown
+    id: manual-afectado
+    attributes:
+      label: Manual afectado
+      description: Selecciona el documento exacto donde encontraste la inconsistencia.
+      options:
+        - "GitHub General - Debian GNU/Linux"
+        - "GitHub General - Windows PowerShell"
+        - "GitHub General - macOS Apple Silicon"
+        - "Unity & GitHub - Debian GNU/Linux"
+        - "Unity & GitHub - Windows PowerShell"
+        - "Unity & GitHub - macOS Apple Silicon"
+        - "README o Documentación general"
+    validations:
+      required: true
+  - type: textarea
+    id: descripcion-problema
+    attributes:
+      label: Descripción del problema o comando incorrecto
+      description: Explica con claridad qué comando o instrucción falló y qué error arrojó tu terminal.
+      placeholder: "En la sección 4.3, el comando ejecutado arrojó el error..."
+    validations:
+      required: true
+  - type: textarea
+    id: solucion-propuesta
+    attributes:
+      label: Solución o corrección sugerida (opcional)
+      description: Si conoces el comando o sintaxis correcta actualizada, escríbela aquí.
+      placeholder: "El comando debería actualizarse a..."
+    validations:
+      required: false

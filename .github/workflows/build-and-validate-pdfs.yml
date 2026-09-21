@@ -1,0 +1,57 @@
+name: Validar y Compilar Manuales PDF
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.md'
+      - '**.js'
+      - 'package.json'
+      - 'UNITY/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.md'
+      - '**.js'
+      - 'package.json'
+      - 'UNITY/**'
+
+jobs:
+  build-pdfs:
+    name: 📄 Validar y Compilar 6 Manuales PDF
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar Google Chrome Headless
+        run: |
+          sudo apt update
+          sudo apt install -y wget gnupg
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+
+      - name: Instalar dependencias npm
+        run: npm ci || npm install
+
+      - name: Compilar Manuales Generales y de Unity
+        run: |
+          # Crear enlace simbólico para compatibilidad de ruta de Chrome en Linux si es necesario
+          npm run build
+
+      - name: Subir PDFs Compilados como Artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: manuales-pdf-alta-resolucion
+          path: |
+            manual-github-*.pdf
+            UNITY/manual-unity-*.pdf

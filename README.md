@@ -1,6 +1,10 @@
-# Manuales Oficiales de GitHub: De Novato a Avanzado 🚀
+# Manuales Oficiales de GitHub & Unity: De Novato a Avanzado 🚀
+
+![Manuales de GitHub & Unity](assets/social-preview.png)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Repo Status](https://img.shields.io/badge/Repo-Público%20%26%20Open%20Source-success.svg)](https://github.com/sajitario2004/manualGit)
+[![CI Build](https://github.com/sajitario2004/manualGit/actions/workflows/build-and-validate-pdfs.yml/badge.svg)](https://github.com/sajitario2004/manualGit/actions)
 [![Unity](https://img.shields.io/badge/Unity-2022%20LTS%20%2F%20Unity%206-black.svg?logo=unity)](UNITY/)
 [![Platform - Debian](https://img.shields.io/badge/Platform-Debian%20GNU%2FLinux-d70a53.svg?logo=debian)](manual-github-debian-linux.md)
 [![Platform - Windows](https://img.shields.io/badge/Platform-Windows%20PowerShell-0078d4.svg?logo=powershell)](manual-github-powershell-windows.md)
@@ -11,10 +15,22 @@ Colección completa y exhaustiva de manuales técnicos profesionales para domina
 
 Cada manual está **100% adaptado a las herramientas, rutas, gestores de credenciales y particularidades de su sistema operativo**, e incluye:
 - **Comandos listos para copiar y pegar** con explicación detallada de cada instrucción (`¿Qué hace este comando?`).
+- **Flujos duales:** Comandos para **Terminal (CLI)** y pasos detallados con capturas de pantalla para **GitHub Desktop (GUI)**.
 - **Solución por temas a la edición concurrente del mismo archivo** (escenarios resueltos paso a paso).
 - **Herramientas modernas de productividad** (Git Worktrees, Git Bisect & Blame, GitHub Codespaces, GitHub Copilot CLI, Pre-commit).
 - **Catálogo maestro de incidentes reales** con guías de recuperación paso a paso.
 - Versiones en **Markdown (`.md`)** y en **PDF imprimible de alta resolución (`.pdf`)** con portadas dedicadas, estilo visual oscuro para terminales y tablas comparativas.
+
+---
+
+## ⚡ Tarjetas de Referencia Rápida (Cheatsheets de 1 Página)
+
+Para tener siempre a mano junto al teclado o pegar en tu panel de trabajo:
+
+| Cheatsheet | Enfoque Principal | Enlace |
+| :--- | :--- | :---: |
+| **Git & GitHub en 1 Página** | Comandos diarios, ramas, stash, resolución de conflictos y rescates con `reflog`. | [Ver Cheatsheet](CHEATSHEETS/cheatsheet-git-github.md) |
+| **Unity & GitHub en 1 Página** | Reglas de `.meta`, comandos Git LFS, bloqueo de binarios y `UnityYAMLMerge`. | [Ver Cheatsheet](CHEATSHEETS/cheatsheet-unity-github.md) |
 
 ---
 
@@ -219,16 +235,71 @@ npm run build:unity
 
 ---
 
-## 📁 Estructura del Repositorio
+## 🛠️ Herramientas y Scripts Útiles (`tools/`)
+
+Scripts listos para usar en tus proyectos para automatizar configuraciones y prevenir errores:
+
+| Herramienta | Función | Plataforma |
+| :--- | :--- | :---: |
+| [`tools/unity-meta-checker.py`](tools/unity-meta-checker.py) | Audita la carpeta `Assets/` detectando `.meta` huérfanos, assets sin metadatos, GUIDs duplicados y archivos >100 MB. | Multiplataforma (Python 3) |
+| [`tools/setup-unityyamlmerge.sh`](tools/setup-unityyamlmerge.sh) | Autodetecta la versión instalada de Unity Editor en Unity Hub y configura `UnityYAMLMerge` en Git. | Linux & macOS (Bash) |
+| [`tools/setup-unityyamlmerge.ps1`](tools/setup-unityyamlmerge.ps1) | Autodetecta la versión instalada de Unity Editor en Unity Hub y configura `UnityYAMLMerge.exe` en Git. | Windows (PowerShell) |
+| [`tools/git-hooks/pre-commit`](tools/git-hooks/pre-commit) | Hook de Git para bloquear automáticamente commits con assets sin `.meta` o archivos >100 MB fuera de LFS. | Git Hook (POSIX) |
+
+---
+
+## 📦 Plantillas de Inicio para Unity (`templates/unity-starter/`)
+
+Archivos optimizados listos para copiar y pegar en la raíz de cualquier proyecto nuevo de Unity:
+
+* [`.gitignore`](templates/unity-starter/.gitignore): Exclusión rigurosa de cachés (`Library/`, `Temp/`, `.vs/`, compilaciones y temporales de OS).
+* [`.gitattributes`](templates/unity-starter/.gitattributes): Configuración exhaustiva de Git LFS para 3D, texturas, audios, bloqueo concurrente (`lockable`) y merge semántico.
+* [`.editorconfig`](templates/unity-starter/.editorconfig): Reglas de formateo estandarizado para C# y YAML en Unity.
+
+---
+
+## 🤝 Comunidad y Gobernanza Open Source
+
+Este proyecto es de código abierto y agradece las contribuciones de la comunidad de desarrolladores y creadores de videojuegos:
+
+* 📖 **[Guía de Contribución](CONTRIBUTING.md):** Normas de estilo, formato de comandos y flujo de trabajo con Pull Requests.
+* 📜 **[Código de Conducta](CODE_OF_CONDUCT.md):** Estándar de convivencia respetuosa basado en Contributor Covenant 2.1.
+* 🛡️ **[Política de Seguridad](SECURITY.md):** Procedimiento para el reporte responsable de vulnerabilidades.
+* 💬 **[GitHub Discussions](https://github.com/sajitario2004/manualGit/discussions):** Foro comunitario para resolver dudas sobre Git, Unity y control de versiones.
+
+---
+
+## 📁 Estructura Completa del Repositorio
 
 ```
 manualGit/
-├── .gitignore                               # Exclusiones de Git y dependencias
-├── README.md                                # Documentación principal del repositorio
-├── LICENSE                                  # Licencia oficial MIT
-├── build-manuals.js                         # Motor Markdown -> HTML -> PDF para GitHub
-├── compile-all.js                           # Orquestador para compilar todos los PDFs
-├── package.json                             # Metadatos del proyecto y scripts npm
+├── .github/                                 # Automatizaciones y gobernanza GitHub
+│   ├── ISSUE_TEMPLATE/                      # Formularios de reporte de bugs y propuestas
+│   │   ├── config.yml
+│   │   ├── error_en_manual.yml
+│   │   └── propuesta_nuevo_manual.yml
+│   ├── workflows/                           # Pipelines de CI/CD (GitHub Actions)
+│   │   └── build-and-validate-pdfs.yml
+│   └── pull_request_template.md             # Plantilla con checklist para Pull Requests
+│
+├── assets/                                  # Recursos gráficos del repositorio
+│   └── social-preview.png                   # Banner oficial Open Graph para redes
+│
+├── tools/                                   # Scripts utilitarios para proyectos
+│   ├── unity-meta-checker.py                # Auditor de .meta y GUIDs en Python
+│   ├── setup-unityyamlmerge.sh              # Autoconfigurador para Linux y macOS
+│   ├── setup-unityyamlmerge.ps1             # Autoconfigurador para Windows
+│   └── git-hooks/                           # Hooks de Git preconfigurados
+│       └── pre-commit
+│
+├── templates/unity-starter/                 # Plantillas de inicio para proyectos Unity
+│   ├── .gitignore
+│   ├── .gitattributes
+│   └── .editorconfig
+│
+├── CHEATSHEETS/                             # Tarjetas de referencia rápida de 1 página
+│   ├── cheatsheet-git-github.md
+│   └── cheatsheet-unity-github.md
 │
 ├── manual-github-debian-linux.md            # Manual GitHub para Debian GNU/Linux
 ├── manual-github-debian-linux.pdf           # PDF maquetado para Debian GNU/Linux
@@ -237,14 +308,24 @@ manualGit/
 ├── manual-github-macos-apple-silicon.md     # Manual GitHub para macOS Apple Silicon
 ├── manual-github-macos-apple-silicon.pdf    # PDF maquetado para macOS Apple Silicon
 │
-└── UNITY/                                   # Guías especializadas de Unity y GitHub
-    ├── compile-unity-manuals.js             # Compilador dedicado de PDFs para Unity
-    ├── manual-unity-github-debian-linux.md      # Manual Unity para Debian GNU/Linux
-    ├── manual-unity-github-debian-linux.pdf     # PDF Unity para Debian GNU/Linux
-    ├── manual-unity-github-powershell-windows.md  # Manual Unity para Windows PowerShell
-    ├── manual-unity-github-powershell-windows.pdf # PDF Unity para Windows PowerShell
-    ├── manual-unity-github-macos-apple-silicon.md # Manual Unity para macOS Apple Silicon
-    └── manual-unity-github-macos-apple-silicon.pdf# PDF Unity para macOS Apple Silicon
+├── UNITY/                                   # Guías especializadas de Unity y GitHub
+│   ├── compile-unity-manuals.js             # Compilador dedicado de PDFs para Unity
+│   ├── images/                              # Capturas e ilustraciones de interfaz
+│   ├── manual-unity-github-debian-linux.md      # Manual Unity para Debian GNU/Linux
+│   ├── manual-unity-github-debian-linux.pdf     # PDF Unity para Debian GNU/Linux
+│   ├── manual-unity-github-powershell-windows.md  # Manual Unity para Windows PowerShell
+│   ├── manual-unity-github-powershell-windows.pdf # PDF Unity para Windows PowerShell
+│   ├── manual-unity-github-macos-apple-silicon.md # Manual Unity para macOS Apple Silicon
+│   └── manual-unity-github-macos-apple-silicon.pdf# PDF Unity para macOS Apple Silicon
+│
+├── build-manuals.js                         # Motor de maquetación HTML -> PDF
+├── compile-all.js                           # Orquestador central de compilación
+├── package.json                             # Metadatos del proyecto y dependencias
+├── CONTRIBUTING.md                          # Guía para colaboradores
+├── CODE_OF_CONDUCT.md                       # Código de conducta oficial
+├── SECURITY.md                              # Política de divulgación responsable
+├── LICENSE                                  # Licencia MIT
+└── README.md                                # Documentación central del repositorio
 ```
 
 ---
@@ -252,3 +333,4 @@ manualGit/
 ## 📄 Licencia
 
 Este proyecto se distribuye bajo la licencia **MIT**. Eres libre de usar, modificar, compartir y distribuir este contenido para fines personales, educativos o comerciales.
+

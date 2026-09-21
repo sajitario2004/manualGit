@@ -1,0 +1,31 @@
+name: 💡 Proponer nuevo tema o manual
+description: Sugerir la incorporación de una nueva guía, motor (Unreal, Godot) o tecnología a la colección.
+title: "[PROPUESTA]: "
+labels: ["enhancement", "feature", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Nos encanta expandir los horizontes del repositorio! Explícanos tu idea para incorporar un nuevo manual o tema técnico.
+  - type: input
+    id: titulo-propuesta
+    attributes:
+      label: Título del tema o tecnología propuesta
+      description: Ejemplo: "Guía de GitHub para Unreal Engine 5 con PlasticSCM y Git LFS".
+      placeholder: "Manual de..."
+    validations:
+      required: true
+  - type: textarea
+    id: justificacion
+    attributes:
+      label: ¿Por qué sería valioso para la comunidad de desarrolladores?
+      placeholder: "Actualmente existe una gran necesidad en equipos indie de..."
+    validations:
+      required: true
+  - type: textarea
+    id: puntos-clave
+    attributes:
+      label: Puntos técnicos clave que debería cubrir la guía
+      placeholder: "- Instalación y configuración\n- Gestión de assets binarios\n- CI/CD y automatización"
+    validations:
+      required: true
