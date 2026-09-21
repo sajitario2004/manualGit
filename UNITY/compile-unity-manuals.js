@@ -83,6 +83,33 @@ function getCss(accentColor, accentLight, bgCoverGrad, osBadge) {
     print-color-adjust: exact;
   }
 
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    margin: 16px auto 6px auto;
+    display: block;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  p:has(img) {
+    text-align: center;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .caption-text {
+    font-size: 8.5pt;
+    color: #64748b;
+    text-align: center;
+    display: block;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
   /* COVER PAGE */
   .cover-page {
     height: 100vh;

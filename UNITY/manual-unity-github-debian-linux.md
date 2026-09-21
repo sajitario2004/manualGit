@@ -1,9 +1,8 @@
 # Manual de Unity y GitHub: De Novato a Avanzado en Debian Linux
 
-> **Plataforma:** Debian GNU/Linux (11 Bullseye / 12 Bookworm / Ubuntu LTS)  
+> **Plataforma:** Debian GNU/Linux (11 Bullseye / 12 Bookworm / Ubuntu LTS / Derivadas)  
 > **Motor:** Unity 2022 LTS / Unity 6 (6000.x)  
-> **Shell:** Bash / GNU Coreutils  
-> **Herramientas:** Git 2.40+, Git LFS, GitHub CLI (`gh`), Unity Hub para Linux, UnityYAMLMerge  
+> **Herramientas:** Git 2.40+, Git LFS, GitHub CLI (`gh`), GitHub Desktop (Linux Fork / Flatpak), Unity Hub, UnityYAMLMerge  
 
 ---
 
@@ -11,56 +10,65 @@
 
 1. [Parte I: Fundamentos y Preparación del Entorno Unity en Debian](#parte-i-fundamentos-y-preparación-del-entorno-unity-en-debian)
    - 1.1 [Anatomía de un Proyecto de Unity: Qué se versiona y qué se ignora](#11-anatomía-de-un-proyecto-de-unity-qué-se-versiona-y-qué-se-ignora)
-   - 1.2 [Instalación de Git, Git LFS y GitHub CLI en Debian](#12-instalación-de-git-git-lfs-y-github-cli-en-debian)
-   - 1.3 [Configuración Crítica del Editor de Unity: Visible Meta Files y Force Text](#13-configuración-crítica-del-editor-de-unity-visible-meta-files-y-force-text)
+   - 1.2 [Instalación de Git, Git LFS, GitHub CLI y GitHub Desktop en Debian](#12-instalación-de-git-git-lfs-github-cli-y-github-desktop-en-debian)
+   - 1.3 [Configuración Crítica del Editor: Visible Meta Files y Force Text](#13-configuración-crítica-del-editor-visible-meta-files-y-force-text)
    - 1.4 [La Regla de Oro de los Archivos `.meta` y los GUIDs](#14-la-regla-de-oro-de-los-archivos-meta-y-los-guids)
    - 1.5 [El Archivo `.gitignore` Oficial y Optimizado para Unity](#15-el-archivo-gitignore-oficial-y-optimizado-para-unity)
    - 1.6 [Configuración Exhaustiva de Git LFS con `.gitattributes`](#16-configuración-exhaustiva-de-git-lfs-con-gitattributes)
 2. [Parte II: Flujo de Trabajo Esencial Diario (Nivel Novato)](#parte-ii-flujo-de-trabajo-esencial-diario-nivel-novato)
-   - 2.1 [Inicializar y Publicar un Proyecto de Unity en GitHub](#21-inicializar-y-publicar-un-proyecto-de-unity-en-github)
+   - 2.1 [Inicializar y Publicar un Proyecto en GitHub (Terminal y GitHub Desktop)](#21-inicializar-y-publicar-un-proyecto-en-github-terminal-y-github-desktop)
    - 2.2 [Clonación Correcta de Proyectos con Git LFS](#22-clonación-correcta-de-proyectos-con-git-lfs)
-   - 2.3 [El Ciclo de Trabajo Seguro: Modificar, Probar y Commitear](#23-el-ciclo-de-trabajo-seguro-modificar-probar-y-commitear)
+   - 2.3 [El Ciclo de Trabajo Seguro: Modificar, Inspeccionar y Confirmar Commits](#23-el-ciclo-de-trabajo-seguro-modificar-inspeccionar-y-confirmar-commits)
    - 2.4 [Conventional Commits Aplicados al Desarrollo de Videojuegos](#24-conventional-commits-aplicados-al-desarrollo-de-videojuegos)
-   - 2.5 [Sincronización sin Romper la Cache (`pull --rebase`)](#25-sincronización-sin-romper-la-cache-pull---rebase)
-3. [Parte III: Estrategias Colaborativas en Unity (Nivel Intermedio)](#parte-iii-estrategias-colaborativas-en-unity-nivel-intermedio)
-   - 3.1 [Estrategia de Ramas en Equipos de Videojuegos](#31-estrategia-de-ramas-en-equipos-de-videojuegos)
+   - 2.5 [Sincronización sin Romper la Cache (`pull --rebase` vs Fetch en Desktop)](#25-sincronización-sin-romper-la-cache-pull---rebase-vs-fetch-en-desktop)
+3. [Parte III: Ramas, Fusiones y Estrategias Colaborativas (Nivel Intermedio)](#parte-iii-ramas-fusiones-y-estrategias-colaborativas-nivel-intermedio)
+   - 3.1 [Estrategia de Ramas en Equipos de Videojuegos (CLI y Desktop)](#31-estrategia-de-ramas-en-equipos-de-videojuegos-cli-y-desktop)
    - 3.2 [Arquitectura de Escenas Divididas (Multi-Scene Editing Aditivo)](#32-arquitectura-de-escenas-divididas-multi-scene-editing-aditivo)
    - 3.3 [Aislamiento de Trabajo Mediante Prefabs Anidados y Variantes](#33-aislamiento-de-trabajo-mediante-prefabs-anidados-y-variantes)
    - 3.4 [Configuración de UnityYAMLMerge como Mergetool Semántico](#34-configuración-de-unityyamlmerge-como-mergetool-semántico)
-   - 3.5 [Uso de Git Stash y Worktrees sin Desestabilizar Unity](#35-uso-de-git-stash-y-worktrees-sin-desestabilizar-unity)
+   - 3.5 [Uso de Git Stash, Historial y Reversión Segura (CLI y Desktop)](#35-uso-de-git-stash-historial-y-reversión-segura-cli-y-desktop)
 4. [Parte IV: Soluciones por Temas a Conflictos y Edición Concurrente](#parte-iv-soluciones-por-temas-a-conflictos-y-edición-concurrente)
    - 4.1 [Tema 1: Prevención Arquitectónica de Conflictos en Unity](#41-tema-1-prevención-arquitectónica-de-conflictos-en-unity)
    - 4.2 [Tema 2: Conflictos en Archivos `.meta` (GUID Desincronizado)](#42-tema-2-conflictos-en-archivos-meta-guid-desincronizado)
    - 4.3 [Tema 3: Conflictos en Scripts C# (`.cs`)](#43-tema-3-conflictos-en-scripts-c-cs)
-   - 4.4 [Tema 4: Conflictos en Escenas (`.unity`) y Prefabs (`.prefab`) con UnityYAMLMerge](#44-tema-4-conflictos-en-escenas-unity-y-prefabs-prefab-con-unityyamlmerge)
+   - 4.4 [Tema 4: Conflictos en Escenas y Prefabs con UnityYAMLMerge (CLI y Desktop)](#44-tema-4-conflictos-en-escenas-y-prefabs-con-unityyamlmerge-cli-y-desktop)
    - 4.5 [Tema 5: Forzar una Versión Completa de Asset (`--ours` vs `--theirs`)](#45-tema-5-forzar-una-versión-completa-de-asset---ours-vs---theirs)
    - 4.6 [Tema 6: Cambios Locales en el Editor al Hacer Pull](#46-tema-6-cambios-locales-en-el-editor-al-hacer-pull)
    - 4.7 [Tema 7: Push Rechazado por Desfase y Rebase Seguro con LFS](#47-tema-7-push-rechazado-por-desfase-y-rebase-seguro-con-lfs)
-   - 4.8 [Tema 8: Conflictos en Archivos Binarios y Bloqueo Exclusivo con Git LFS Lock](#48-tema-8-conflictos-en-archivos-binarios-y-bloqueo-exclusivo-con-git-lfs-lock)
+   - 4.8 [Tema 8: Conflictos en Binarios y Bloqueo con Git LFS Lock](#48-tema-8-conflictos-en-binarios-y-bloqueo-con-git-lfs-lock)
    - 4.9 [Tema 9: Conflicto de Eliminación de Asset con `.meta` Huérfano](#49-tema-9-conflicto-de-eliminación-de-asset-con-meta-huérfano)
-5. [Parte V: Gestión de Paquetes UPM y Dependencias](#parte-v-gestión-de-paquetes-upm-y-dependencias)
-   - 5.1 [Instalación de Paquetes de Unity Mediante URLs de Git](#51-instalación-de-paquetes-de-unity-mediante-urls-de-git)
-   - 5.2 [Creación y Publicación de Paquetes UPM en Repositorios Privados](#52-creación-y-publicación-de-paquetes-upm-en-repositorios-privados)
-6. [Parte VI: Automatización CI/CD con GitHub Actions y Unity (GameCI)](#parte-vi-automatización-cicd-con-github-actions-y-unity-gameci)
-   - 6.1 [Arquitectura de GameCI para Compilaciones de Videojuegos](#61-arquitectura-de-gameci-para-compilaciones-de-videojuegos)
-   - 6.2 [Activación de Licencias de Unity en GitHub Actions](#62-activación-de-licencias-de-unity-en-github-actions)
-   - 6.3 [Pipeline Automatizado: Pruebas EditMode/PlayMode y Compilación Linux](#63-pipeline-automatizado-pruebas-editmodeplaymode-y-compilación-linux)
-   - 6.4 [Subida Automática de Builds a GitHub Releases](#64-subida-automática-de-builds-a-github-releases)
-7. [Parte VII: Seguridad y Políticas de Repositorio en Equipos de Videojuegos](#parte-vii-seguridad-y-políticas-de-repositorio-en-equipos-de-videojuegos)
-   - 7.1 [Protección de Ramas y Bloqueo de Push sin PR](#71-protección-de-ramas-y-bloqueo-de-push-sin-pr)
-   - 7.2 [Gestión de Secretos para APIs de Juegos (Steam, Photon, Firebase)](#72-gestión-de-secretos-para-apis-de-juegos-steam-photon-firebase)
-   - 7.3 [Gobernanza con `CODEOWNERS` para Artistas y Programadores](#73-gobernanza-con-codeowners-para-artistas-y-programadores)
-8. [Parte VIII: Catálogo Maestro de Incidentes Críticos de Unity en GitHub](#parte-viii-catálogo-maestro-de-incidentes-críticos-de-unity-en-github)
-   - 8.1 [Incidente 1: "Missing Script" Masivo por Desincronización de GUIDs](#81-incidente-1-missing-script-masivo-por-desincronización-de-guids)
-   - 8.2 [Incidente 2: Escena Corrupta por Edición Manual o Conflicto Mal Resuelto](#82-incidente-2-escena-corrupta-por-edición-manual-o-conflicto-mal-resuelto)
-   - 8.3 [Incidente 3: Subida Accidental de la Carpeta `Library/` (Repositorio Gigante)](#83-incidente-3-subida-accidental-de-la-carpeta-library-repositorio-gigante)
-   - 8.4 [Incidente 4: Repositorio Bloqueado por Superar el Límite de 100 MB](#84-incidente-4-repositorio-bloqueado-por-superar-el-límite-de-100-mb)
-   - 8.5 [Incidente 5: Shaders Magenta / Rosados tras Clonar en Linux](#85-incidente-5-shaders-magenta--rosados-tras-clonar-en-linux)
-   - 8.6 [Incidente 6: Límite de Ancho de Banda de Git LFS Superado](#86-incidente-6-límite-de-ancho-de-banda-de-git-lfs-superado)
-   - 8.7 [Incidente 7: Desfase de Versiones Menores del Editor de Unity](#87-incidente-7-desfase-de-versiones-menores-del-editor-de-unity)
-   - 8.8 [Incidente 8: Archivos Bloqueados por Procesos de Unity al Conmutar Ramas](#88-incidente-8-archivos-bloqueados-por-procesos-de-unity-al-conmutar-ramas)
-   - 8.9 [Incidente 9: Fuga de Claves en ScriptableObjects o Archivos de Configuración](#89-incidente-9-fuga-de-claves-en-scriptableobjects-o-archivos-de-configuración)
-   - 8.10 [Incidente 10: Regeneración Limpia y Segura de la Cache Local](#810-incidente-10-regeneración-limpia-y-segura-de-la-cache-local)
+5. [Parte V: Herramientas Modernas de Productividad Avanzada](#parte-v-herramientas-modernas-de-productividad-avanzada)
+   - 5.1 [Git Worktrees en Linux: Trabajar en Múltiples Ramas sin Recargar `Library/`](#51-git-worktrees-en-linux-trabajar-en-múltiples-ramas-sin-recargar-library)
+   - 5.2 [Depuración Binaria con Git Bisect y Blame en C#](#52-depuración-binaria-con-git-bisect-y-blame-en-c)
+   - 5.3 [GitHub Codespaces y Desarrollo en la Nube para Unity](#53-github-codespaces-y-desarrollo-en-la-nube-para-unity)
+   - 5.4 [GitHub Copilot CLI para Programadores de Unity](#54-github-copilot-cli-para-programadores-de-unity)
+   - 5.5 [Git Hooks y Validación Pre-commit de Archivos `.meta`](#55-git-hooks-y-validación-pre-commit-de-archivos-meta)
+6. [Parte VI: Gestión de Paquetes UPM y Dependencias](#parte-vi-gestión-de-paquetes-upm-y-dependencias)
+   - 6.1 [Instalación de Paquetes Mediante URLs de Git en UPM](#61-instalación-de-paquetes-mediante-urls-de-git-en-upm)
+   - 6.2 [Creación y Publicación de Paquetes UPM en Repositorios Privados con Tokens](#62-creación-y-publicación-de-paquetes-upm-en-repositorios-privados-con-tokens)
+7. [Parte VII: Automatización CI/CD con GitHub Actions y GameCI](#parte-vii-automatización-cicd-con-github-actions-y-gameci)
+   - 7.1 [Arquitectura de GameCI para Compilaciones de Videojuegos](#71-arquitectura-de-gameci-para-compilaciones-de-videojuegos)
+   - 7.2 [Activación de Licencias de Unity en GitHub Actions](#72-activación-de-licencias-de-unity-en-github-actions)
+   - 7.3 [Pipeline Automatizado: Tests EditMode/PlayMode y Compilación StandaloneLinux64](#73-pipeline-automatizado-tests-editmodeplaymode-y-compilación-standalonelinux64)
+   - 7.4 [Subida Automática de Artefactos de Build](#74-subida-automática-de-artefactos-de-build)
+8. [Parte VIII: Seguridad y Políticas de Repositorio en Equipos de Videojuegos](#parte-viii-seguridad-y-políticas-de-repositorio-en-equipos-de-videojuegos)
+   - 8.1 [Protección de Ramas y Rulesets](#81-protección-de-ramas-y-rulesets)
+   - 8.2 [Gestión de Secretos para APIs de Juegos (Steam, Photon, Firebase)](#82-gestión-de-secretos-para-apis-de-juegos-steam-photon-firebase)
+   - 8.3 [Gobernanza con `CODEOWNERS` para Artistas y Programadores](#83-gobernanza-con-codeowners-para-artistas-y-programadores)
+9. [Parte IX: Distribución y Despliegue con GitHub Releases](#parte-ix-distribución-y-despliegue-con-github-releases)
+   - 9.1 [Creación Automatizada de Releases con Tags Semánticos](#91-creación-automatizada-de-releases-con-tags-semánticos)
+   - 9.2 [Publicación de Instaladores y Paquetes de Videojuegos](#92-publicación-de-instaladores-y-paquetes-de-videojuegos)
+10. [Parte X: Catálogo Maestro de Incidentes Críticos de Unity en Linux](#parte-x-catálogo-maestro-de-incidentes-críticos-de-unity-en-linux)
+    - 10.1 [Incidente 1: "Missing Script" Masivo por Desincronización de GUIDs](#101-incidente-1-missing-script-masivo-por-desincronización-de-guids)
+    - 10.2 [Incidente 2: Escena Corrupta por Edición Manual o Conflicto Mal Resuelto](#102-incidente-2-escena-corrupta-por-edición-manual-o-conflicto-mal-resuelto)
+    - 10.3 [Incidente 3: Subida Accidental de la Carpeta `Library/` (Repositorio Gigante)](#103-incidente-3-subida-accidental-de-la-carpeta-library-repositorio-gigante)
+    - 10.4 [Incidente 4: Repositorio Bloqueado por Superar el Límite de 100 MB](#104-incidente-4-repositorio-bloqueado-por-superar-el-límite-de-100-mb)
+    - 10.5 [Incidente 5: Shaders Magenta / Rosados tras Clonar en Linux](#105-incidente-5-shaders-magenta--rosados-tras-clonar-en-linux)
+    - 10.6 [Incidente 6: Límite de Almacenamiento y Ancho de Banda de Git LFS Superado](#106-incidente-6-límite-de-almacenamiento-y-ancho-de-banda-de-git-lfs-superado)
+    - 10.7 [Incidente 7: Desfase de Versiones Menores del Editor de Unity](#107-incidente-7-desfase-de-versiones-menores-del-editor-de-unity)
+    - 10.8 [Incidente 8: Archivos Bloqueados por Procesos de Unity en Ejecución](#108-incidente-8-archivos-bloqueados-por-procesos-de-unity-en-ejecución)
+    - 10.9 [Incidente 9: Fuga de Claves Privadas en ScriptableObjects o Configuración](#109-incidente-9-fuga-de-claves-privadas-en-scriptableobjects-o-configuración)
+    - 10.10 [Incidente 10: Regeneración Limpia y Segura de la Caché Local del Proyecto](#1010-incidente-10-regeneración-limpia-y-segura-de-la-caché-local-del-proyecto)
 
 ---
 
@@ -72,7 +80,7 @@ Un proyecto de Unity contiene miles de archivos autogenerados. Comprender la est
 
 ```
 MiJuegoUnity/
-├── Assets/              --> [OBLIGATORIO EN GIT] Código C#, Escenas, Prefabs, Texturas, Modelos.
+├── Assets/              --> [OBLIGATORIO EN GIT] Código C#, Escenas, Prefabs, Texturas, Modelos y sus archivos .meta.
 ├── Packages/            --> [OBLIGATORIO EN GIT] manifest.json y packages-lock.json (librerías UPM).
 ├── ProjectSettings/     --> [OBLIGATORIO EN GIT] Configuración física, capas, tags, gráficos del juego.
 ├── Library/             --> [¡NUNCA EN GIT!] Cache compilada de assets generada por el Editor local.
@@ -84,9 +92,9 @@ MiJuegoUnity/
 
 ---
 
-## 1.2 Instalación de Git, Git LFS y GitHub CLI en Debian
+## 1.2 Instalación de Git, Git LFS, GitHub CLI y GitHub Desktop en Debian
 
-En Debian Linux, los proyectos de videojuegos requieren el soporte de Git LFS (Large File Storage) para alojar archivos pesados (texturas 4K, audios sin compresión y modelos 3D).
+En Debian Linux, los proyectos de videojuegos requieren Git LFS (Large File Storage) para alojar archivos pesados (texturas 4K, audios sin compresión y modelos 3D), GitHub CLI para automatización y GitHub Desktop para artistas y diseñadores que prefieren entorno gráfico.
 
 ### Paso 1: Instalar dependencias del sistema y Git LFS
 ```bash
@@ -105,11 +113,26 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubc
 sudo apt update && sudo apt install -y gh
 ```
 > **¿Qué hace este comando?**  
-> Añade el repositorio oficial de GitHub e instala la herramienta `gh` para gestionar repositorios, Pull Requests, issues y autenticación desde la consola.
+> Registra la clave criptográfica oficial de GitHub, añade el repositorio oficial a Debian e instala la herramienta oficial de línea de comandos `gh`.
+
+### Paso 3: Instalar GitHub Desktop en Debian Linux
+GitHub Desktop en Linux se instala fácilmente a través del repositorio empaquetado por la comunidad o mediante Flatpak:
+
+```bash
+# Opción A: Mediante repositorio APT (Recomendado para Debian/Ubuntu)
+wget -qO - https://mirror.mwt.me/ghd/gpgkey | sudo tee /etc/apt/keyrings/mwt.asc > /dev/null
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/mwt.asc] https://mirror.mwt.me/ghd/deb/ any main" | sudo tee /etc/apt/sources.list.d/github-desktop.list
+sudo apt update && sudo apt install -y github-desktop
+
+# Opción B: Mediante Flatpak
+flatpak install -y flathub io.github.shifteight.GitHubDesktop
+```
+> **¿Qué hace este comando?**  
+> Proporciona la aplicación nativa gráfica de GitHub Desktop en tu escritorio GNOME, KDE o XFCE de Debian, permitiendo flujos visuales completos para los miembros no técnicos del equipo.
 
 ---
 
-## 1.3 Configuración Crítica del Editor de Unity: Visible Meta Files y Force Text
+## 1.3 Configuración Crítica del Editor: Visible Meta Files y Force Text
 
 Antes de inicializar Git en cualquier proyecto de Unity, debes verificar dos ajustes obligatorios en el Editor:
 
@@ -118,6 +141,9 @@ Antes de inicializar Git en cualquier proyecto de Unity, debes verificar dos aju
    - En **Mode**, selecciona estrictamente: `Visible Meta Files`.
 3. Navega a **Edit -> Project Settings -> Editor**.
    - En **Asset Serialization Mode**, selecciona estrictamente: `Force Text`.
+
+![Configuración Crítica de Unity: Visible Meta Files y Force Text](images/unity_project_settings.jpg)
+<span class="caption-text">Figura 1.1: Configuración obligatoria en Unity Project Settings (Editor) estableciendo Visible Meta Files y Force Text para serialización YAML.</span>
 
 > [!IMPORTANT]
 > `Force Text` obliga a Unity a guardar todas las escenas (`.unity`), prefabs (`.prefab`), materiales (`.mat`) y configuraciones en texto plano **YAML** en lugar de binario propietario. Esto permite ver diferencias (*diffs*) comprensibles y fusionar cambios en Git.
@@ -137,36 +163,38 @@ guid: e81b8979d46f4eb2a6886e92f25b2901
 ```
 
 > [!CAUTION]
-> **LA REGLA FUNDAMENTAL:**  
-> Si mueves, renombras o borras un asset fuera de Unity (por ejemplo en el explorador de archivos de Debian), **debes mover, renombrar o borrar su archivo `.meta` idénticamente**. Si subes un asset sin su `.meta` a GitHub, Unity en la máquina de tu compañero generará un nuevo GUID aleatorio, rompiendo todas las conexiones de escenas, prefabs y componentes (*Missing Script* y *Missing Prefab*).
+> **LA REGLA FUNDAMENTAL DE UNITY Y GIT:**  
+> 1. Si mueves o renombras un archivo fuera de Unity (por ejemplo en la terminal), **DEBES mover o renombrar su `.meta` idénticamente**.
+> 2. Si eliminas un asset, **DEBES eliminar su archivo `.meta`**.
+> 3. Al hacer commit, **NUNCA hagas commit de un asset sin su archivo `.meta` acompañante**. Si rompes esta regla, los componentes aparecerán en las escenas como **"Missing (Script)"** o los materiales perderán sus texturas.
 
 ---
 
 ## 1.5 El Archivo `.gitignore` Oficial y Optimizado para Unity
 
-Crea el archivo `.gitignore` en la raíz de tu proyecto de Unity:
+Crea este archivo `.gitignore` en la raíz de tu repositorio para asegurar que solo los archivos fuente sean rastreados:
 
 ```gitignore
 # ==========================================
-# Archivos autogenerados por Unity (Ignorar)
+# Archivo Oficial .gitignore para Unity
 # ==========================================
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-/[Mm]emoryCaptures/
 
-# Asset store packages y respaldos
-/[Aa]ssets/AssetStoreTools*
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
 
-# Soluciones y proyectos de IDEs (Visual Studio, Rider, VS Code)
-Visual Studio*
+# Asset server cache
+sysinfo.txt
+*.stackdump
+
+# Configuraciones y soluciones generadas por IDEs
 .vs/
-ExportedObj/
-.consulo/
+.idea/
 *.csproj
 *.unityproj
 *.sln
@@ -177,17 +205,23 @@ ExportedObj/
 *.booproj
 *.svd
 *.pdb
-*.mdb
 *.opendb
 *.VC.db
 
-# Compilaciones de Unity
+# Compilaciones de Unity Standalone y WebGL
 *.apk
 *.aab
 *.unitypackage
 *.app
+*.x86_64
+*.debug
 
-# Archivos de SO
+# Sistema Operativo Linux
+.directory
+*~
+.fuse_hidden*
+.Trash-*
+.nfs*
 .DS_Store
 Thumbs.db
 ```
@@ -196,452 +230,649 @@ Thumbs.db
 
 ## 1.6 Configuración Exhaustiva de Git LFS con `.gitattributes`
 
-Git LFS evita que tu repositorio crezca decenas de gigabytes al sustituir archivos binarios gigantes por pequeños punteros de texto.
-
-Crea el archivo `.gitattributes` en la raíz de tu proyecto:
+Crea el archivo `.gitattributes` en la raíz del proyecto para indicarle a Git qué archivos deben gestionarse a través del almacenamiento de grandes objetos (LFS) y cuáles son texto fusionable:
 
 ```gitattributes
 # ==========================================
-# Configuración de finales de línea
+# Configuración de Git LFS para Unity en Linux
 # ==========================================
-* text=auto eol=lf
-*.cs text diff=csharp
-*.cginc text
-*.shader text
-*.hlsl text
-*.compute text
-*.json text
-*.xml text
-*.yaml text
-*.yml text
 
-# ==========================================
-# Unity YAML Merge (Fusión inteligente de escenas y prefabs)
-# ==========================================
-*.unity merge=unityyamlmerge eol=lf
-*.prefab merge=unityyamlmerge eol=lf
-*.asset merge=unityyamlmerge eol=lf
-*.mat merge=unityyamlmerge eol=lf
-
-# ==========================================
-# Git LFS: Modelos 3D
-# ==========================================
+# Modelos 3D y Formatos de Animación
 *.fbx filter=lfs diff=lfs merge=lfs -text
 *.obj filter=lfs diff=lfs merge=lfs -text
 *.blend filter=lfs diff=lfs merge=lfs -text
-*.max filter=lfs diff=lfs merge=lfs -text
 *.dae filter=lfs diff=lfs merge=lfs -text
+*.3ds filter=lfs diff=lfs merge=lfs -text
+*.max filter=lfs diff=lfs merge=lfs -text
 
-# ==========================================
-# Git LFS: Texturas y Gráficos
-# ==========================================
+# Texturas e Imágenes de Alta Resolución
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
 *.jpg filter=lfs diff=lfs merge=lfs -text
 *.jpeg filter=lfs diff=lfs merge=lfs -text
-*.tga filter=lfs diff=lfs merge=lfs -text
-*.psd filter=lfs diff=lfs merge=lfs -text
-*.tif filter=lfs diff=lfs merge=lfs -text
-*.tiff filter=lfs diff=lfs merge=lfs -text
 *.exr filter=lfs diff=lfs merge=lfs -text
 *.hdr filter=lfs diff=lfs merge=lfs -text
+*.tif filter=lfs diff=lfs merge=lfs -text
+*.tiff filter=lfs diff=lfs merge=lfs -text
 
-# ==========================================
-# Git LFS: Audio y Video
-# ==========================================
+# Audio y Efectos Sonoros
 *.wav filter=lfs diff=lfs merge=lfs -text
 *.mp3 filter=lfs diff=lfs merge=lfs -text
 *.ogg filter=lfs diff=lfs merge=lfs -text
-*.flac filter=lfs diff=lfs merge=lfs -text
+*.aif filter=lfs diff=lfs merge=lfs -text
+*.aiff filter=lfs diff=lfs merge=lfs -text
+
+# Vídeo y Cutscenes
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
 
-# ==========================================
-# Git LFS: Binarios compilados y fuentes
-# ==========================================
-*.dll filter=lfs diff=lfs merge=lfs -text
-*.so filter=lfs diff=lfs merge=lfs -text
-*.dylib filter=lfs diff=lfs merge=lfs -text
-*.ttf filter=lfs diff=lfs merge=lfs -text
+# Paquetes Comprimidos y Tipografías
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.7z filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
 *.otf filter=lfs diff=lfs merge=lfs -text
+*.ttf filter=lfs diff=lfs merge=lfs -text
+
+# Activar Bloqueo Concurrente (LFS Lock) para Binarios Críticos
+*.fbx lockable
+*.psd lockable
+*.blend lockable
+*.wav lockable
+
+# Serialización de Texto y Mergetool de Unity
+*.cs text diff=csharp eol=lf
+*.json text eol=lf
+*.shader text eol=lf
+*.unity merge=unityyamlmerge eol=lf
+*.prefab merge=unityyamlmerge eol=lf
+*.mat merge=unityyamlmerge eol=lf
+*.asset merge=unityyamlmerge eol=lf
+*.meta text eol=lf
 ```
 
 ---
 
 # Parte II: Flujo de Trabajo Esencial Diario (Nivel Novato)
 
-## 2.1 Inicializar y Publicar un Proyecto de Unity en GitHub
+## 2.1 Inicializar y Publicar un Proyecto en GitHub (Terminal y GitHub Desktop)
 
+### Modalidad A: Vía Terminal de Linux (Bash)
 ```bash
 cd ~/UnityProjects/MiVideojuego
 git init
 git lfs install
-git add .gitignore .gitattributes
-git commit -m "chore: configurar gitignore y gitattributes para Unity con LFS"
-git add Assets/ Packages/ ProjectSettings/
-git commit -m "feat: inicializar estructura principal del proyecto Unity"
-gh repo create MiVideojuego --public --source=. --remote=origin --push
+git add .gitattributes .gitignore
+git commit -m "chore: inicializar configuración de Unity con LFS y gitignore"
+git branch -M main
+gh repo create MiVideojuego --private --source=. --remote=origin --push
 ```
 > **¿Qué hace este comando?**  
-> Inicializa el repositorio Git en la carpeta del juego, activa los filtros de Git LFS, commitea primero las reglas de exclusión y atributos, commitea las 3 carpetas obligatorias del motor y publica el repositorio en GitHub con un solo comando.
+> Inicializa el repositorio Git local, activa Git LFS, agrega la configuración inicial de filtros, renombra la rama principal a `main` y utiliza la herramienta `gh` para crear el repositorio privado directamente en GitHub y subir los archivos.
+
+### Modalidad B: Vía GitHub Desktop (Entorno Gráfico)
+1. Abre **GitHub Desktop** desde el lanzador de aplicaciones de Debian.
+2. Pulsa en el menú superior **File -> Add Local Repository** (o `Ctrl + O`).
+3. Selecciona la carpeta de tu juego (donde están `Assets`, `Packages` y `ProjectSettings`).
+4. Si la carpeta aún no tiene Git, pulsa en el enlace azul **"create a repository"**.
+5. Asegúrate de seleccionar el Git Ignore para **Unity** y la licencia adecuada.
+6. Pulsa en el botón azul **"Publish Repository"** en la barra superior para subirlo a tu cuenta de GitHub con visibilidad pública o privada.
+
+![Adición o Clonación de Proyecto Unity en GitHub Desktop](images/gh_desktop_clone_add.jpg)
+<span class="caption-text">Figura 2.1: Cuadro de diálogo 'Add Existing Repository' en GitHub Desktop seleccionando la carpeta del proyecto Unity.</span>
 
 ---
 
 ## 2.2 Clonación Correcta de Proyectos con Git LFS
 
-Al clonar un proyecto de Unity en otra máquina con Debian:
+Al clonar un proyecto de Unity en otra estación de trabajo Linux, debes asegurarte de que los archivos pesados de Git LFS se descarguen correctamente:
 
+### Modalidad A: Vía Terminal
 ```bash
-git clone git@github.com:usuario/MiVideojuego.git
-cd MiVideojuego
+git lfs install
+git clone git@github.com:mi-organizacion/videojuego.git
+cd videojuego
 git lfs pull
 ```
 > **¿Qué hace este comando?**  
-> Descarga el repositorio y ejecuta `git lfs pull` para descargar los archivos binarios reales (texturas, sonidos) correspondientes a los punteros de texto.
+> Asegura que el filtro LFS esté activo en el sistema, clona el repositorio de GitHub y fuerza la descarga completa (`git lfs pull`) de todos los archivos binarios referenciados por punteros.
+
+### Modalidad B: Vía GitHub Desktop
+1. Pulsa en **File -> Clone Repository** (o `Ctrl + Shift + O`).
+2. En la pestaña **GitHub.com**, busca el repositorio del juego o pega la URL en la pestaña **URL**.
+3. Elige la ruta local de destino en tu disco y pulsa **Clone**.
+4. GitHub Desktop detecta automáticamente Git LFS y descargará los modelos 3D y texturas sin requerir comandos adicionales.
 
 ---
 
-## 2.3 El Ciclo de Trabajo Seguro: Modificar, Probar y Commitear
+## 2.3 El Ciclo de Trabajo Seguro: Modificar, Inspeccionar y Confirmar Commits
 
-Antes de confirmar cambios en Git:
-1. Guarda todas las escenas abiertas en Unity (`Ctrl + S`).
-2. Espera a que termine la compilación de scripts en Unity (indicador giratorio en la esquina inferior derecha).
-3. Inspecciona qué archivos cambiaron:
+El ciclo en Unity exige revisar que cada asset modificado vaya acompañado de su respectivo archivo `.meta`.
 
+### Modalidad A: Vía Terminal
 ```bash
-git status -s
-```
-> **¿Qué hace este comando?**  
-> Muestra los archivos modificados. Verifica siempre que por cada archivo dentro de `Assets/` se encuentre presente su respectivo archivo `.meta`.
+# 1. Inspeccionar el estado de los archivos
+git status
 
-```bash
-# Preparar tanto el código como su archivo meta inseparable
+# 2. Agregar cambios asegurando que archivos y sus .meta vayan juntos
 git add Assets/Scripts/PlayerController.cs Assets/Scripts/PlayerController.cs.meta
+git add Assets/Prefabs/Player.prefab Assets/Prefabs/Player.prefab.meta
+
+# 3. Confirmar cambios con mensaje descriptivo
+git commit -m "feat(player): añadir salto e impulso de física con Rigidbody2D"
 ```
 > **¿Qué hace este comando?**  
-> Añade al área de preparación de manera conjunta el script y su identificador GUID.
+> Muestra los archivos modificados, añade selectivamente el script y el prefab junto a sus respectivos archivos de metadatos `.meta`, y crea un commit atómico.
+
+### Modalidad B: Vía GitHub Desktop
+1. En la columna izquierda de **Changes**, verás la lista de archivos modificados.
+2. Comprueba que por cada archivo `.cs`, `.prefab` o `.unity`, su correspondiente `.meta` esté marcado con la casilla de verificación activada.
+3. En el panel derecho puedes inspeccionar la diferencia exacta (*diff*) de las líneas añadidas o eliminadas.
+4. En el recuadro inferior izquierdo, escribe el **Summary** (título del commit) y opcionalmente una **Description**.
+5. Haz clic en el botón azul **Commit to main** (o a la rama en la que te encuentres).
+
+![Gestión de Cambios, Archivos .meta y Commits en GitHub Desktop](images/gh_desktop_commit_changes.jpg)
+<span class="caption-text">Figura 2.2: Interfaz de GitHub Desktop mostrando la verificación en pareja de scripts y sus archivos .meta antes de confirmar el commit.</span>
 
 ---
 
 ## 2.4 Conventional Commits Aplicados al Desarrollo de Videojuegos
 
-| Tipo | Uso en Unity | Ejemplo |
+Usa prefijos estandarizados para que el historial sea comprensible por programadores, artistas y diseñadores:
+
+| Prefijo | Área de Aplicación en Videojuegos | Ejemplo |
 | :--- | :--- | :--- |
-| `feat:` | Mecánica, escena o sistema nuevo | `git commit -m "feat(combat): añadir sistema de combo cuerpo a cuerpo"` |
-| `fix:` | Corrección de bug de física o lógica | `git commit -m "fix(physics): corregir salto doble infinito del jugador"` |
-| `art:` | Nuevos modelos, texturas o animaciones | `git commit -m "art(boss): importar modelo y texturas de Dragon.fbx"` |
-| `audio:` | Efectos de sonido o bandas sonoras | `git commit -m "audio(ui): integrar SFX de clic en menú principal"` |
-| `perf:` | Optimización de draw calls o memoria | `git commit -m "perf(rendering): habilitar GPU instancing en materiales"` |
+| `feat:` | Nueva mecánica, sistema o lógica de juego | `feat(combat): implementar combo de 3 golpes con espada` |
+| `fix:` | Corrección de bugs de código o físicas | `fix(physics): evitar que el personaje atraviese esquinas a alta velocidad` |
+| `art:` | Nuevos modelos 3D, texturas, sprites o rigs | `art(enemies): añadir textura difusa 4K y normal map del boss` |
+| `level:` | Modificaciones en escenas, iluminación o props | `level(dungeon): colocar cofres de recompensa y luces en sala 2` |
+| `audio:` | Efectos de sonido, música de fondo y mixers | `audio(ui): integrar sonido de clic y confirmación de compra` |
+| `perf:` | Optimización de draw calls, LODs o GC Alloc | `perf(rendering): reducir uso de memoria mediante Texture Compression ASTC` |
+| `chore:` | Actualización de dependencias UPM o gitignore | `chore(deps): actualizar Cinemachine a version 2.9.7` |
 
 ---
 
-## 2.5 Sincronización sin Romper la Cache (`pull --rebase`)
+## 2.5 Sincronización sin Romper la Cache (`pull --rebase` vs Fetch en Desktop)
 
+En Unity, hacer un `pull` con merge commits innecesarios provoca cambios constantes de timestamp que fuerzan al Editor a reimportar innecesariamente la base de datos de assets.
+
+### Modalidad A: Vía Terminal
 ```bash
-git fetch origin
 git pull --rebase origin main
 git push origin main
 ```
 > **¿Qué hace este comando?**  
-> Descarga las modificaciones de los compañeros y reaplica tus commits locales de manera lineal. Unity detectará los cambios en segundo plano y reimportará únicamente los assets alterados.
+> Descarga los commits del servidor remoto y recoloca tus commits locales ordenadamente por encima sin crear un commit de fusión falso, evitando reinicios masivos del importador de Unity.
+
+### Modalidad B: Vía GitHub Desktop
+1. En la barra superior, haz clic en **Fetch origin** para comprobar si hay actualizaciones en el servidor.
+2. Si existen cambios nuevos, el botón cambiará a **Pull origin** con un contador.
+3. Haz clic en **Pull origin** para recibir los cambios.
+4. Finalmente, haz clic en **Push origin** para enviar tus commits a GitHub.
 
 ---
 
-# Parte III: Estrategias Colaborativas en Unity (Nivel Intermedio)
+# Parte III: Ramas, Fusiones y Estrategias Colaborativas (Nivel Intermedio)
 
-## 3.1 Estrategia de Ramas en Equipos de Videojuegos
+## 3.1 Estrategia de Ramas en Equipos de Videojuegos (CLI y Desktop)
 
-* **`main` / `master`:** Versión jugable y estable lista para demostraciones o compilación.
-* **`develop`:** Rama de integración continua donde se prueban las mecánicas unificadas.
-* **`feature/mecanica-inventario`:** Ramas de trabajo aisladas de cada programador o diseñador.
+En proyectos de videojuegos, las ramas evitan que experimentos rotos desestabilicen el proyecto principal:
+* `main`: Versión estable, siempre jugable y sin errores de compilación.
+* `develop`: Integración de mecánicas completadas.
+* `feature/<nombre>`: Desarrollo de sistemas específicos (`feature/inventario`).
+* `art/<nombre>`: Incorporación y ajuste estético de modelos y animaciones.
 
+### Modalidad A: Vía Terminal
 ```bash
+# Crear y cambiar a una rama de funcionalidad
 git switch -c feature/sistema-inventario
+
+# Subir la rama a GitHub
 git push -u origin feature/sistema-inventario
 ```
+> **¿Qué hace este comando?**  
+> Crea la nueva rama aislada y la publica en GitHub vinculándola para futuros pushes automáticos.
+
+### Modalidad B: Vía GitHub Desktop
+1. En la barra superior, haz clic en el menú desplegable **Current Branch**.
+2. Escribe el nombre de la nueva rama (por ejemplo `feature/sistema-inventario`).
+3. Haz clic en el botón azul **New branch...**.
+4. Haz clic en **Publish branch** para sincronizarla con el repositorio remoto de GitHub.
+
+![Gestión de Ramas y Creación de Feature Branches en GitHub Desktop](images/gh_desktop_branch.jpg)
+<span class="caption-text">Figura 3.1: Menú desplegable 'Current Branch' en GitHub Desktop para creación y conmutación de ramas de trabajo.</span>
 
 ---
 
 ## 3.2 Arquitectura de Escenas Divididas (Multi-Scene Editing Aditivo)
 
-**El mayor error de los equipos novatos en Unity es trabajar todos sobre una única escena llamada `SampleScene.unity`.** Las escenas son archivos YAML de miles de líneas; cuando dos personas mueven objetos al mismo tiempo, resolver el conflicto es extremadamente difícil.
+El error más destructivo en un equipo de Unity es tener a dos personas editando el mismo archivo `Nivel01.unity` simultáneamente. La solución técnica profesional es la **Carga Aditiva de Escenas**:
 
-### Solución Profesional: Escenas Aditivas
-Divide cada nivel del juego en múltiples escenas más pequeñas que se cargan juntas en tiempo de ejecución:
-1. `Nivel_01_Core.unity` (GameManager, luces principales, cámaras).
-2. `Nivel_01_Entorno.unity` (Terreno, edificios, estática de arte).
-3. `Nivel_01_Enemigos.unity` (Generadores de IA, triggers de combate).
-4. `Nivel_01_Audio.unity` (Fuentes de sonido de ambiente y música).
+```
+Nivel01 (Estructura de Escenas):
+├── Nivel01_Core.unity        --> Cámaras principales, GameManagers, UI Canvas.
+├── Nivel01_Geometry.unity    --> Terreno, mallas estáticas, colisionadores (Artistas).
+├── Nivel01_Lighting.unity    --> Luces, Reflection Probes, Lightmaps (Iluminadores).
+└── Nivel01_Gameplay.unity    --> Spawners de enemigos, triggers, checkpoints (Diseñadores).
+```
 
-De este modo:
-- El artista de escenarios edita `Nivel_01_Entorno.unity`.
-- El diseñador de combate edita `Nivel_01_Enemigos.unity`.
-- **Nunca se produce conflicto porque son archivos físicos distintos en Git.**
+### Script C# para Carga Aditiva en Tiempo de Ejecución:
+Guarda este script en `Assets/Scripts/SceneLoader.cs`:
+```csharp
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class SceneLoader : MonoBehaviour
+{
+    [Header("Escenas Aditivas")]
+    [SerializeField] private string[] additiveScenes = {
+        "Nivel01_Geometry",
+        "Nivel01_Lighting",
+        "Nivel01_Gameplay"
+    };
+
+    private void Start()
+    {
+        foreach (string sceneName in additiveScenes)
+        {
+            if (!SceneManager.GetSceneByName(sceneName).isLoaded)
+            {
+                SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            }
+        }
+    }
+}
+```
+> **Beneficio en Git:**  
+> El artista trabaja en `Nivel01_Geometry.unity`, el iluminador en `Nivel01_Lighting.unity` y el programador en `Nivel01_Core.unity`. Cada persona modifica un archivo físico diferente, logrando **cero conflictos de fusión**.
 
 ---
 
 ## 3.3 Aislamiento de Trabajo Mediante Prefabs Anidados y Variantes
 
-Convierte cada elemento interactivo (jugadores, puertas, interfaces, trampas) en un **Prefab** (`.prefab`).
+Las escenas deben contener únicamente instancias de Prefabs, no GameObjects crudos sueltos:
 
-* Si necesitas ajustar el comportamiento de un enemigo, abre el modo Prefab aislado en Unity y edita `Enemigo.prefab`.
-* **Nunca modifiques la escena completa para cambiar un valor:** edita el Prefab. Al commitear, solo se alterará `Enemigo.prefab` y la escena principal permanecerá intacta.
+1. **Evita la modificación directa en la jerarquía de la escena:** Si necesitas alterar el comportamiento o los componentes de un enemigo, abre su archivo `.prefab` en el **Prefab Mode**.
+2. **Usa Variantes de Prefab:** Crea un prefab base `EnemigoBase.prefab` y genera variantes como `EnemigoFuego.prefab` y `EnemigoHielo.prefab`. Las variaciones sólo guardan las diferencias (*overrides*), manteniendo los diffs de Git limpios y atómicos.
 
 ---
 
 ## 3.4 Configuración de UnityYAMLMerge como Mergetool Semántico
 
-Unity incluye un solucionador semántico interno para fusionar automáticamente escenas y prefabs.
-
-Localiza el ejecutable en Debian (habitualmente dentro de la instalación de Unity Editor en `~/Unity/Hub/Editor/<version>/Editor/Data/Tools/UnityYAMLMerge` o `/opt/unity/Editor/Data/Tools/UnityYAMLMerge`).
-
-Configúralo en tu archivo global de Git:
+Unity incluye su propia herramienta de fusión tridireccional diseñada para entender la estructura interna de archivos YAML de Unity (como Transform, GameObjects y Componentes):
 
 ```bash
-UNITY_PATH="$HOME/Unity/Hub/Editor/6000.0.23f1/Editor/Data/Tools/UnityYAMLMerge"
-
-git config --global merge.unityyamlmerge.name "Unity SmartMerge"
-git config --global merge.unityyamlmerge.driver "$UNITY_PATH merge -h -p --mode=落后 %O %A %B %A"
+# Configuración global del motor de fusión UnityYAMLMerge en Debian
+git config --global merge.unityyamlmerge.name "Unity Smart Merge"
+git config --global merge.unityyamlmerge.driver \
+  "~/Unity/Hub/Editor/$(ls ~/Unity/Hub/Editor | tail -n 1)/Editor/Data/Tools/UnityYAMLMerge merge -h -p -- '%O' '%B' '%A' '%A'"
+git config --global merge.unityyamlmerge.trustExitCode true
 git config --global merge.unityyamlmerge.recursive binary
 ```
 > **¿Qué hace este comando?**  
-> Configura Git para que, ante cualquier colisión en archivos `.unity` o `.prefab`, invoque el analizador inteligente de Unity capaz de entender la jerarquía interna de GameObjects y resolver discrepancias automáticamente.
+> Vincula el ejecutable `UnityYAMLMerge` de la versión instalada más reciente en tu Unity Hub como el motor de fusión predeterminado para archivos `.unity` y `.prefab`. Resuelve de manera autónoma más del 90% de conflictos en escenas.
 
 ---
 
-## 3.5 Uso de Git Stash y Worktrees sin Desestabilizar Unity
+## 3.5 Uso de Git Stash, Historial y Reversión Segura (CLI y Desktop)
 
-Conmutar de rama abruptamente dentro de Unity provoca que el motor elimine y reimporte gigabytes de cache en `Library/`, congelando el equipo por minutos.
+Si necesitas pausar una tarea inacabada para revisar un bug urgente en otra rama, debes resguardar tu trabajo:
 
-### Usar Git Worktrees para trabajar en dos ramas a la vez:
+### Modalidad A: Vía Terminal
 ```bash
-# Crear una carpeta paralela en disco con la rama de hotfix
-git worktree add ../MiJuego-Hotfix hotfix/parche-urgente
+# Guardar cambios sin confirmar en el stash
+git stash save "WIP: ajuste de colisiones de personaje"
+
+# Conmutar a otra rama para revisar un bug
+git switch main
+
+# Volver a tu rama y restaurar el trabajo
+git switch feature/mi-mecanica
+git stash pop
 ```
 > **¿Qué hace este comando?**  
-> Extrae la rama en una carpeta completamente separada. Puedes abrir dos instancias de Unity simultáneas en Debian, una para cada carpeta, sin vaciar la cache de compilación de ninguna de ellas.
+> Almacena de forma temporal los cambios sin crear commits y permite recuperarlos limpiamente.
+
+### Modalidad B: Vía GitHub Desktop
+1. Si tienes cambios en **Changes** y cambias de rama, GitHub Desktop mostrará una ventana emergente:
+   - Selecciona **"Leave my changes on [rama-actual]"** (Crea un Stash automáticamente).
+2. Para restaurarlo, ve a la parte inferior de la columna izquierda donde dice **Stashed Changes** y haz clic en **Restore**.
+3. Para revertir un commit dañado: ve a la pestaña **History**, haz clic derecho sobre el commit problemático y pulsa en **Revert changes in commit**.
+
+![Historial de Commits e Inspección de Cambios en GitHub Desktop](images/gh_desktop_history.jpg)
+<span class="caption-text">Figura 3.2: Pestaña 'History' de GitHub Desktop con el menú contextual de reversión y creación de ramas a partir de commits previos.</span>
 
 ---
 
 # Parte IV: Soluciones por Temas a Conflictos y Edición Concurrente
 
----
-
 ## 4.1 Tema 1: Prevención Arquitectónica de Conflictos en Unity
-
-1. **Adopta Multi-Scene Editing:** Trabaja en escenas separadas y cárgalas con `SceneManager.LoadSceneAsync("Escena", LoadSceneMode.Additive)`.
-2. **Encapsula en Prefabs:** Todo elemento es un prefab; la escena es únicamente un contenedor vacío de instanciación.
-3. **Bloqueo de Escenas:** Si un nivel no puede dividirse, utiliza `git lfs lock Niveles/JefeFinal.unity` para avisar al equipo de que esa escena está en edición exclusiva.
+* **Multi-Scene:** Divide los niveles en subescenas funcionales.
+* **Prefabs Anidados:** Realiza modificaciones dentro de los prefabs, nunca en el árbol de la escena.
+* **Comunicación de Equipo:** Notifica en el canal de Slack/Discord antes de modificar un prefab compartido (`Player.prefab` o `MainCamera.prefab`).
 
 ---
 
 ## 4.2 Tema 2: Conflictos en Archivos `.meta` (GUID Desincronizado)
 
-**Problema:** Dos desarrolladores importaron un asset con el mismo nombre o editaron la configuración de importación de una textura a la vez, produciendo un conflicto en el `.meta`.
+Ocurre cuando dos personas añaden un asset con el mismo nombre o mueven carpetas simultáneamente, generando dos GUIDs distintos para el mismo recurso:
 
 ```bash
+# Identificar el conflicto en el .meta
 git status
-# Muestra: both modified: Assets/Sprites/Jugador.png.meta
+
+# Visualizar el conflicto
+git diff Assets/Textures/Pasto.png.meta
 ```
 
-### Solución:
-1. Abre el archivo `.meta` en conflicto con `nano`:
-   ```bash
-   nano Assets/Sprites/Jugador.png.meta
-   ```
-2. **Conserva siempre un único `guid:` homogéneo.** Si el asset ya estaba enlazado en escenas existentes, mantén el GUID original previo para no romper las referencias.
-3. Elimina las líneas delimitadoras `<<<<<<<`, `=======` y `>>>>>>>`.
-4. Guarda el archivo y ejecuta:
-   ```bash
-   git add Assets/Sprites/Jugador.png.meta
-   git rebase --continue
-   git push origin main
-   ```
+### Solución Paso a Paso:
+1. Si el archivo en disco ya fue referenciado en escenas por tu compañero: conserva el GUID remoto.
+2. Abre el `.meta` en tu editor de texto y quédate con un único bloque `guid:` limpio.
+3. En la consola o en GitHub Desktop confirma la resolución:
+```bash
+git add Assets/Textures/Pasto.png.meta
+git commit -m "fix(meta): resolver colisión de GUID en textura Pasto"
+```
 
 ---
 
 ## 4.3 Tema 3: Conflictos en Scripts C# (`.cs`)
 
-Los scripts C# son texto plano estructurado y se resuelven con el procedimiento estándar de código:
+Cuando dos programadores modifican la misma función en un script:
 
+```csharp
+<<<<<<< HEAD
+    void Jump() {
+        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+    }
+=======
+    void Jump() {
+        if (isGrounded) {
+            rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+        }
+    }
+>>>>>>> feature/salto-mejorado
+```
+
+### Solución:
+1. Edita el script en Visual Studio Code o JetBrains Rider combinando la validación del suelo con el método preferido:
+```csharp
+    void Jump() {
+        if (isGrounded) {
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
+    }
+```
+2. Guarda el archivo y confirma:
 ```bash
-git status
-nano Assets/Scripts/Heroe.cs
-# Reconciliar la lógica del método y guardar
-git add Assets/Scripts/Heroe.cs
-git rebase --continue
-git push origin main
+git add Assets/Scripts/PlayerController.cs
+git commit -m "fix(player): fusionar comprobación de suelo con impulso de salto"
 ```
 
 ---
 
-## 4.4 Tema 4: Conflictos en Escenas (`.unity`) y Prefabs (`.prefab`) con UnityYAMLMerge
+## 4.4 Tema 4: Conflictos en Escenas y Prefabs con UnityYAMLMerge (CLI y Desktop)
 
-Si dos personas modificaron la misma escena y ocurre un conflicto:
+Cuando dos desarrolladores modifican GameObjects distintos dentro de la misma escena:
 
+### Modalidad A: Vía Terminal con UnityYAMLMerge
 ```bash
-# 1. Invocar la herramienta inteligente de Unity
-git mergetool
+# Ejecutar la herramienta semántica configurada previamente
+git mergetool -t unityyamlmerge
 ```
 > **¿Qué hace este comando?**  
-> Lanza `UnityYAMLMerge`. Si los cambios corresponden a GameObjects con IDs diferentes en la jerarquía, Unity reconciliará la escena automáticamente sin corromper el árbol YAML.
+> UnityYAMLMerge analiza el árbol de GameObjects y resuelve automáticamente las colisiones de IDs y referencias sin corromper el formato YAML.
 
-Si UnityYAMLMerge no logra resolverlo automáticamente (por ejemplo, ambos cambiaron la misma propiedad del mismo componente):
-1. Abrirá tu editor gráfico de respaldo (VS Code o Meld).
-2. Inspecciona el bloque de IDs en conflicto, decide los valores correctos y guarda.
-3. Ejecuta:
-   ```bash
-   git add Assets/Scenes/Nivel1.unity
-   git commit -m "merge: resolver conflicto en escena Nivel1"
-   git push origin main
-   ```
+### Modalidad B: Vía GitHub Desktop
+1. Tras un merge o pull conflictivo, GitHub Desktop abre la ventana modal **Resolve conflicts before merging**.
+2. Verás los archivos conflictivos señalados con un icono amarillo de advertencia (ej. `Assets/Scenes/Level01.unity`).
+3. En el menú desplegable junto al archivo, haz clic en **Open in UnityYAMLMerge** (o **Open in External Program**).
+4. La herramienta resolverá el árbol semántico y marcará el conflicto como resuelto.
+5. Haz clic en el botón azul **Resolve Conflicts** para finalizar el commit de fusión.
+
+![Resolución de Conflictos en Unity con GitHub Desktop y UnityYAMLMerge](images/gh_desktop_conflict.jpg)
+<span class="caption-text">Figura 4.1: Ventana de resolución de conflictos en GitHub Desktop permitiendo derivar la escena a UnityYAMLMerge o elegir versiones completas.</span>
 
 ---
 
 ## 4.5 Tema 5: Forzar una Versión Completa de Asset (`--ours` vs `--theirs`)
 
-Si una escena o material fue rehecho completamente por uno de los desarrolladores y la otra versión debe descartarse:
+Si un asset binario o una escena sufrieron una colisión irresoluble y se decide descartar completamente una de las dos versiones:
 
+### Modalidad A: Vía Terminal
 ```bash
-# Conservar mi versión completa local:
-git checkout --ours Assets/Scenes/Nivel1.unity Assets/Scenes/Nivel1.unity.meta
-git add Assets/Scenes/Nivel1.unity Assets/Scenes/Nivel1.unity.meta
-git commit -m "resolve: conservar escena local completa"
-git push origin main
+# Opción 1: Conservar tu versión local intacta y descartar la del servidor
+git checkout --ours Assets/Scenes/Level01.unity
+git add Assets/Scenes/Level01.unity
+git commit -m "resolve: conservar versión local de Level01"
+
+# Opción 2: Descartar tu versión y adoptar al 100% la del servidor remoto
+git checkout --theirs Assets/Scenes/Level01.unity
+git add Assets/Scenes/Level01.unity
+git commit -m "resolve: aceptar versión del servidor de Level01"
 ```
 
-```bash
-# Aceptar la versión de mi compañero en GitHub íntegramente:
-git checkout --theirs Assets/Scenes/Nivel1.unity Assets/Scenes/Nivel1.unity.meta
-git add Assets/Scenes/Nivel1.unity Assets/Scenes/Nivel1.unity.meta
-git commit -m "resolve: aceptar escena remota del compañero"
-git push origin main
-```
-
-> [!IMPORTANT]
-> Al forzar una versión con `--ours` o `--theirs`, **aplica siempre el comando tanto al archivo del asset como a su archivo `.meta` gemelo** para evitar desincronizaciones de identificadores.
+### Modalidad B: Vía GitHub Desktop
+1. En la modal de **Resolve conflicts before merging**, haz clic en la flecha desplegable del archivo.
+2. Selecciona **Use Modified Version** (para aceptar tu versión) o **Use Existing Version** (para aceptar la remota).
 
 ---
 
 ## 4.6 Tema 6: Cambios Locales en el Editor al Hacer Pull
 
-Si hiciste modificaciones en el Inspector de Unity y necesitas descargar cambios nuevos de GitHub:
+Si Unity guardó automáticamente las escenas al presionar Play y tienes cambios sucios que impiden hacer pull:
 
 ```bash
-git stash save "Cambios de inspector en curso"
+git stash save "auto-save-temporal"
 git pull --rebase origin main
 git stash pop
 ```
-> **¿Qué hace este comando?**  
-> Pone a salvo los cambios del inspector, actualiza el proyecto con las novedades remotas y vuelve a volcar tus modificaciones locales.
+> Si al hacer `stash pop` surgen conflictos en archivos autogenerados de Unity, descarta los temporales con:
+```bash
+git checkout -- Assets/Scenes/AutoSavedScene.unity
+```
 
 ---
 
 ## 4.7 Tema 7: Push Rechazado por Desfase y Rebase Seguro con LFS
 
 ```bash
-# Descargar cambios y alinear tus commits por encima
-git pull --rebase origin main
-# Verificar que los punteros LFS se sincronicen
-git lfs push --all origin main
+# Error habitual: [rejected] (fetch first / non-fast-forward)
+git fetch origin
+git rebase origin/main
 git push origin main
 ```
+> El uso de `rebase` mantiene una línea temporal limpia en la que los punteros de Git LFS se descargan en estricto orden cronológico.
 
 ---
 
-## 4.8 Tema 8: Conflictos en Archivos Binarios y Bloqueo Exclusivo con Git LFS Lock
+## 4.8 Tema 8: Conflictos en Binarios y Bloqueo con Git LFS Lock
 
-Los modelos 3D (`.fbx`), texturas (`.tga`) y sonidos no se pueden fusionar.
+Los archivos binarios (modelos 3D `.blend`/`.fbx`, texturas `.psd`, audios) **no pueden fusionarse por líneas**. Para evitar que dos personas trabajen sobre el mismo binario a la vez:
 
-### Bloquear un asset antes de editarlo:
 ```bash
-git lfs lock Assets/Modelos/BossFinal.fbx
+# 1. Bloquear el archivo antes de comenzar a pintar o modelar
+git lfs lock Assets/Art/Personaje/Heroe.psd
+
+# 2. Verificar qué archivos están bloqueados y por quién
+git lfs locks
+
+# 3. Trabajar en el archivo, guardarlo y subirlo
+git add Assets/Art/Personaje/Heroe.psd
+git commit -m "art(heroe): finalizar detalles de sombras en textura PSD"
+git push origin main
+
+# 4. Liberar el bloqueo para que otros compañeros puedan editarlo
+git lfs unlock Assets/Art/Personaje/Heroe.psd
 ```
 > **¿Qué hace este comando?**  
-> Comunica a GitHub que tienes el archivo bloqueado. Si un compañero intenta hacer push de una modificación sobre `BossFinal.fbx`, GitHub rechazará su push informándole de que tú posees el candado activo.
-
-### Consultar y desbloquear al finalizar:
-```bash
-git lfs locks
-git lfs unlock Assets/Modelos/BossFinal.fbx
-```
+> Informa al servidor de GitHub que el archivo está bajo edición exclusiva, bloqueando el push de cualquier otro usuario sobre ese asset hasta que sea liberado.
 
 ---
 
 ## 4.9 Tema 9: Conflicto de Eliminación de Asset con `.meta` Huérfano
 
-Ocurre cuando un desarrollador borró un asset dentro de Unity y otro añadió un script que dependía de él.
+Si un desarrollador eliminó un archivo y otro compañero modificó únicamente su archivo `.meta`:
 
 ```bash
-# Si se decide conservar el asset:
-git add Assets/Scripts/Herramienta.cs Assets/Scripts/Herramienta.cs.meta
-git commit -m "resolve: mantener herramienta y su meta"
-
-# Si se decide confirmar el borrado de ambos:
-git rm Assets/Scripts/Herramienta.cs Assets/Scripts/Herramienta.cs.meta
-git commit -m "resolve: eliminar script y meta definitivamente"
+# Si el archivo original ya no debe existir:
+git rm Assets/Scripts/OldScript.cs.meta
+git commit -m "chore: purgar archivo .meta huérfano"
 ```
 
 ---
 
-# Parte V: Gestión de Paquetes UPM y Dependencias
+# Parte V: Herramientas Modernas de Productividad Avanzada
 
-## 5.1 Instalación de Paquetes de Unity Mediante URLs de Git
+## 5.1 Git Worktrees en Linux: Trabajar en Múltiples Ramas sin Recargar `Library/`
 
-El Unity Package Manager (UPM) permite consumir librerías directamente desde repositorios de GitHub.
+Conmutar de rama en un proyecto de Unity de 40 GB normalmente obliga al motor a reimportar la carpeta `Library/` durante 20 minutos. Con **Git Worktrees** puedes tener dos ramas abiertas en carpetas independientes del disco:
 
-Edita el archivo `Packages/manifest.json`:
+```bash
+# Crear un árbol de trabajo paralelo para corregir un bug urgente en una carpeta separada
+git worktree add ../MiJuego-Bugfix hotfix/parche-camara
 
+# Abrir una segunda instancia de Unity en la nueva ruta
+cd ../MiJuego-Bugfix
+# Trabajar, commitear y subir
+git push origin hotfix/parche-camara
+
+# Al terminar, eliminar el worktree limpio
+cd ../MiVideojuego
+git worktree remove ../MiJuego-Bugfix
+```
+> **Beneficio clave:**  
+> Tu instancia principal de Unity no sufre ninguna reimportación de assets ni pierde la caché de compilación de shaders.
+
+---
+
+## 5.2 Depuración Binaria con Git Bisect y Blame en C#
+
+Cuando una mecánica deja de funcionar y nadie sabe qué commit introdujo el bug:
+
+```bash
+# Iniciar la búsqueda binaria
+git bisect start
+git bisect bad                 # El commit actual contiene el bug
+git bisect good v1.0.4         # La versión v1.0.4 funcionaba perfectamente
+
+# Git seleccionará el commit intermedio automáticamente.
+# Compila o prueba en Unity y marca el resultado:
+git bisect good  # o: git bisect bad
+
+# Al finalizar, Git te indicará con precisión matemática el commit culpable.
+git bisect reset
+```
+
+---
+
+## 5.3 GitHub Codespaces y Desarrollo en la Nube para Unity
+
+Para editar scripts C#, shaders HLSL o configuraciones sin necesidad de encender la estación de trabajo principal:
+
+```bash
+# Crear un Codespace directamente desde la terminal de Debian
+gh codespace create --repo mi-organizacion/MiVideojuego --branch main
+```
+> Permite revisar PRs, editar código C# con intellisense y compilar librerías en un entorno Linux en la nube con VS Code en el navegador.
+
+---
+
+## 5.4 GitHub Copilot CLI para Programadores de Unity
+
+```bash
+# Consultar comandos complejos de Git para Unity
+gh copilot suggest "como buscar que commit modifico el prefab de Player.prefab"
+gh copilot explain "git lfs prune --dry-run"
+```
+
+---
+
+## 5.5 Git Hooks y Validación Pre-commit de Archivos `.meta`
+
+Crea este hook ejecutable en `.git/hooks/pre-commit` para evitar que nadie en el equipo suba un asset sin su archivo `.meta`:
+
+```bash
+cat << 'EOF' > .git/hooks/pre-commit
+#!/bin/bash
+# Pre-commit hook: Verificar integridad de archivos .meta en Unity
+
+MISSING_META=0
+for file in $(git diff --cached --name-only --diff-filter=A | grep "^Assets/"); do
+    if [[ "$file" != *.meta ]]; then
+        if [ ! -f "${file}.meta" ] && ! git diff --cached --name-only | grep -q "^${file}.meta$"; then
+            echo "❌ ERROR: El asset '$file' no tiene su archivo .meta en el commit."
+            MISSING_META=1
+        fi
+    fi
+done
+
+if [ $MISSING_META -eq 1 ]; then
+    echo "🚨 Commit rechazado: Todo asset de Unity debe incluir su archivo .meta correspondiente."
+    exit 1
+fi
+exit 0
+EOF
+chmod +x .git/hooks/pre-commit
+```
+
+---
+
+# Parte VI: Gestión de Paquetes UPM y Dependencias
+
+## 6.1 Instalación de Paquetes Mediante URLs de Git en UPM
+
+Unity Package Manager permite consumir paquetes directamente desde repositorios de GitHub.
+
+Añade esto a `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.5.5",
-    "com.github.koki-h.novicov": "https://github.com/koki-h/Novicov.git#v1.2.0"
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.neuecc.unirx": "https://github.com/neuecc/UniRx.git?path=Assets/Plugins/UniRx"
   }
 }
 ```
-> **¿Qué hace este comando?**  
-> Descarga la librería directamente desde el repositorio oficial de GitHub congelada en la etiqueta de versión `#v...`, garantizando builds reproducibles para todo el equipo.
 
 ---
 
-## 5.2 Creación y Publicación de Paquetes UPM en Repositorios Privados
+## 6.2 Creación y Publicación de Paquetes UPM en Repositorios Privados con Tokens
 
-Puedes modularizar mecánicas compartidas entre diferentes videojuegos creando un repositorio independiente con la estructura de un paquete UPM:
+Para repositorios privados corporativos en GitHub, configura tu archivo de credenciales de usuario `~/.upmconfig.toml`:
 
-```
-MiLibreriaUPM/
-├── package.json         --> Manifiesto con "name": "com.miestudio.combate"
-├── package.json.meta
-├── Runtime/             --> Código fuente que se ejecuta en el juego
-└── Editor/              --> Extensiones del inspector de Unity
+```toml
+[npmAuth."https://npm.pkg.github.com/mi-empresa"]
+token = "ghp_TU_TOKEN_PERSONAL_CON_SCOPE_READ_PACKAGES"
+email = "desarrollador@mi-empresa.com"
+alwaysAuth = true
 ```
 
 ---
 
-# Parte VI: Automatización CI/CD con GitHub Actions y Unity (GameCI)
+# Parte VII: Automatización CI/CD con GitHub Actions y GameCI
 
-## 6.1 Arquitectura de GameCI para Compilaciones de Videojuegos
+## 7.1 Arquitectura de GameCI para Compilaciones de Videojuegos
 
-**GameCI** es el estándar de la industria para ejecutar pruebas automatizadas y compilaciones de Unity en GitHub Actions dentro de contenedores Docker oficiales con Unity para Linux.
-
----
-
-## 6.2 Activación de Licencias de Unity en GitHub Actions
-
-1. En tu proyecto de GitHub, acude a **Settings -> Secrets and variables -> Actions**.
-2. Añade los siguientes secretos:
-   - `UNITY_EMAIL`: Tu correo de Unity ID.
-   - `UNITY_PASSWORD`: Tu contraseña de Unity ID.
-   - `UNITY_LICENSE`: El contenido del archivo de licencia `.ulf` generado con el workflow de activación de GameCI.
+GameCI utiliza imágenes de Docker optimizadas con el Editor de Unity preinstalado para ejecutar pruebas automatizadas y compilar builds standalone desatendidas.
 
 ---
 
-## 6.3 Pipeline Automatizado: Pruebas EditMode/PlayMode y Compilación Linux
+## 7.2 Activación de Licencias de Unity en GitHub Actions
 
-Crea el archivo `.github/workflows/unity-linux-ci.yml`:
+1. Añade los siguientes secretos en **Settings -> Secrets and variables -> Actions** de tu repositorio de GitHub:
+   - `UNITY_EMAIL`: Tu correo de la cuenta de Unity.
+   - `UNITY_PASSWORD`: Tu contraseña de Unity.
+   - `UNITY_LICENSE`: El contenido en texto de tu archivo de licencia (.ulf).
+
+---
+
+## 7.3 Pipeline Automatizado: Tests EditMode/PlayMode y Compilación StandaloneLinux64
+
+Guarda este workflow en `.github/workflows/unity-build-linux.yml`:
 
 ```yaml
-name: Unity Linux Build & Test CI
+name: Unity CI/CD Linux Standalone
 
 on:
   push:
@@ -650,261 +881,262 @@ on:
     branches: [ main ]
 
 jobs:
-  run-tests:
-    name: Ejecutar Pruebas EditMode y PlayMode
+  test:
+    name: 🧪 Pruebas Unitarias (PlayMode & EditMode)
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar repositorio
+      - name: Checkout del código fuente con LFS
         uses: actions/checkout@v4
         with:
           lfs: true
 
       - name: Cache de Library de Unity
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: Library
-          key: Library-Linux-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: |
-            Library-Linux-
+          key: Library-test-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: Library-test-
 
-      - name: Ejecutar Tests de Unity
+      - name: Ejecutar Tests de Unity (GameCI)
         uses: game-ci/unity-test-runner@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          projectPath: .
-          testMode: all
-          artifactsPath: reports/tests
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Subir resultados de pruebas
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Test-Results
-          path: reports/tests
-
-  build-linux-player:
-    name: Compilar Binario StandaloneLinux64
-    needs: run-tests
+  buildLinux:
+    name: 📦 Compilar Build Standalone Linux x86_64
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout del código con LFS
+        uses: actions/checkout@v4
         with:
           lfs: true
 
-      - uses: actions/cache@v4
+      - name: Cache de Library de Unity
+        uses: actions/cache@v3
         with:
           path: Library
-          key: Library-Linux-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-build-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: Library-build-
 
-      - name: Compilar Videojuego para Linux
+      - name: Compilar Juego para Linux
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          projectPath: .
           targetPlatform: StandaloneLinux64
-          buildName: MiJuegoLinux
-          buildsPath: build/Linux
+          buildName: MiVideojuegoLinux
 
-      - name: Subir artefacto de compilación
+      - name: Subir Artefacto Compilado
         uses: actions/upload-artifact@v4
         with:
-          name: MiJuego-Linux-x86_64
-          path: build/Linux/StandaloneLinux64
+          name: Build-Linux-x86_64
+          path: build/StandaloneLinux64
 ```
 
 ---
 
-## 6.4 Subida Automática de Builds a GitHub Releases
+## 7.4 Subida Automática de Artefactos de Build
+
+Los binarios resultantes de la compilación (`.x86_64`) quedan disponibles inmediatamente para su descarga en la pestaña **Actions** de GitHub como artefactos comprimidos zip.
+
+---
+
+# Parte VIII: Seguridad y Políticas de Repositorio en Equipos de Videojuegos
+
+## 8.1 Protección de Ramas y Rulesets
+
+Configura una regla en **Settings -> Rules -> Rulesets** sobre la rama `main`:
+1. **Require a pull request before merging:** Mínimo 1 aprobación.
+2. **Require status checks to pass:** Exigir que el job `🧪 Pruebas Unitarias (PlayMode & EditMode)` apruebe sin fallos.
+3. **Block force pushes:** Prohíbe terminantemente `git push --force`.
+
+---
+
+## 8.2 Gestión de Secretos para APIs de Juegos (Steam, Photon, Firebase)
+
+Nunca incluyas tokens de Steamworks, claves de Photon Cloud o credenciales de backend dentro de scripts C# o ScriptableObjects que se suban al repositorio público. Utiliza archivos `.env` o `.json` excluidos en el `.gitignore` y cargados en runtime mediante variables de entorno.
+
+---
+
+## 8.3 Gobernanza con `CODEOWNERS` para Artistas y Programadores
+
+Crea `.github/CODEOWNERS` para que las revisiones se soliciten automáticamente a los especialistas del área:
+
+```
+# Gobernanza del proyecto de Unity
+Assets/Scripts/           @equipo-programacion
+Assets/Art/               @lead-artist
+Assets/Audio/             @disenador-sonoro
+Assets/Scenes/            @lead-level-designer
+ProjectSettings/          @tech-lead
+.github/                  @devops-lead
+```
+
+---
+
+# Parte IX: Distribución y Despliegue con GitHub Releases
+
+## 9.1 Creación Automatizada de Releases con Tags Semánticos
 
 ```bash
-gh release create v1.0.0-demo ./build/Linux/MiJuegoLinux.tar.gz \
-  --title "Mi Videojuego v1.0.0 (Linux x86_64)" \
-  --generate-notes
+git tag -a v1.0.0 -m "release: versión 1.0.0 Gold Master para Linux"
+git push origin v1.0.0
+```
+
+---
+
+## 9.2 Publicación de Instaladores y Paquetes de Videojuegos
+
+```bash
+gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
+  --title "Mi Videojuego v1.0.0 (Linux Edition)" \
+  --notes "Compilación oficial para Debian, Ubuntu y distribuciones basadas en Linux x86_64."
 ```
 > **¿Qué hace este comando?**  
-> Sube la compilación final del juego generada en el pipeline directamente a la sección de Releases de GitHub para que el equipo de QA pueda descargarla y probarla.
+> Publica un release formal en GitHub con el binario comprimido descargable por la comunidad o los testers de control de calidad (QA).
 
 ---
 
-# Parte VII: Seguridad y Políticas de Repositorio en Equipos de Videojuegos
+# Parte X: Catálogo Maestro de Incidentes Críticos de Unity en Linux
 
-## 7.1 Protección de Ramas y Bloqueo de Push sin PR
+## 10.1 Incidente 1: "Missing Script" Masivo por Desincronización de GUIDs
 
-Desde **Settings -> Rules -> Rulesets**:
-* **Require a pull request before merging:** Bloquea commits directos en `main`.
-* **Require status checks to pass:** Exige que los tests automatizados de PlayMode y EditMode concluyan en verde antes del merge.
-* **Block force pushes:** Prohíbe el uso de `git push --force` para evitar la pérdida de assets pesados.
-
----
-
-## 7.2 Gestión de Secretos para APIs de Juegos (Steam, Photon, Firebase)
-
-Nunca guardes claves privadas de Steamworks, Photon Engine o servidores multijugador en scripts de C# subidos al repositorio:
-
-```csharp
-// MAL: Clave expuesta en el repositorio
-string apiKey = "AKIAIOSFODNN7EXAMPLE";
-
-// BIEN: Leída desde un ScriptableObject ignorado en .gitignore o inyectada por CI
-string apiKey = Environment.GetEnvironmentVariable("STEAM_API_KEY");
-```
+* **Síntoma:** Todos los componentes de los personajes o enemigos muestran en el Inspector: `The associated script can not be loaded. Please fix any compile errors...`.
+* **Causa:** Un desarrollador eliminó y recreó el archivo `.meta` de un script, asignándole un nuevo GUID aleatorio que rompió todas las referencias previas de las escenas.
+* **Solución de Rescate:**
+  1. Busca el GUID original en el historial de Git:
+     ```bash
+     git log -p -S "guid:" Assets/Scripts/Heroe.cs.meta
+     ```
+  2. Edita `Assets/Scripts/Heroe.cs.meta` y restaura el valor `guid:` original.
+  3. Abre Unity y recarga los assets con **Assets -> Reimport All**.
 
 ---
 
-## 7.3 Gobernanza con `CODEOWNERS` para Artistas y Programadores
+## 10.2 Incidente 2: Escena Corrupta por Edición Manual o Conflicto Mal Resuelto
 
-Crea `.github/CODEOWNERS` para que los cambios en arte sean revisados por directores de arte y el código por arquitectos de software:
-
-```
-# Gobernanza por especialidades
-/Assets/Scripts/ @estudio/programadores-core
-/Assets/Art/ @estudio/lead-artist
-/Assets/Audio/ @estudio/disenador-sonoro
-/ProjectSettings/ @estudio/lead-developer
-```
-
----
-
-# Parte VIII: Catálogo Maestro de Incidentes Críticos de Unity en GitHub
+* **Síntoma:** Al abrir la escena, Unity arroja el error: `Scene 'Nivel01.unity' is damaged and could not be opened`.
+* **Solución:**
+  1. Revisa los marcadores de fusión residuales (`<<<<<<<`, `=======`, `>>>>>>>`):
+     ```bash
+     grep -n "<<<<<<<" Assets/Scenes/Nivel01.unity
+     ```
+  2. Elimina todas las líneas de marcadores de conflicto dejando el archivo YAML válido.
+  3. Si la escena continúa corrupta, descarta los cambios locales y vuelve a la versión del último commit funcional:
+     ```bash
+     git checkout HEAD -- Assets/Scenes/Nivel01.unity
+     ```
 
 ---
 
-## 8.1 Incidente 1: "Missing Script" Masivo por Desincronización de GUIDs
+## 10.3 Incidente 3: Subida Accidental de la Carpeta `Library/` (Repositorio Gigante)
 
-**Causa:** Se subió un script `.cs` sin su correspondiente archivo `.cs.meta`, o alguien cambió manualmente el nombre del archivo fuera de Unity.
-
-### Solución definitiva:
-1. Localiza el GUID que la escena o prefab está buscando abriendo la escena con `nano`:
-   ```bash
-   grep -B 2 -A 4 "m_Script:" Assets/Scenes/Nivel1.unity
-   # Muestra: guid: 4a3f12...
-   ```
-2. Abre el archivo `.cs.meta` del script que debería estar asignado y restaura ese GUID exacto:
-   ```yaml
-   guid: 4a3f12... (pegar el GUID recuperado)
-   ```
-3. Guarda el `.meta`, abre Unity y el componente recuperará su script automáticamente sin tener que reasignar variables en todos los GameObjects.
+* **Síntoma:** El comando `git push` sube más de 20 GB de archivos generados y el repositorio se vuelve lentísimo para todo el equipo.
+* **Solución:**
+  1. Eliminar `Library/` del índice de Git sin tocar los archivos locales:
+     ```bash
+     git rm -r --cached Library/
+     git commit -m "fix(git): remover carpeta Library del índice de Git"
+     git push origin main
+     ```
+  2. Asegurarse de que `[Ll]ibrary/` esté presente en `.gitignore`.
 
 ---
 
-## 8.2 Incidente 2: Escena Corrupta por Edición Manual o Conflicto Mal Resuelto
+## 10.4 Incidente 4: Repositorio Bloqueado por Superar el Límite de 100 MB
 
-**Causa:** Una escena no abre y Unity arroja el error: `YAML parse error: mapping values are not allowed here`.
-
-```bash
-# 1. Comprobar si quedaron marcadores de conflicto sin borrar en el YAML
-grep -nE "^(<<<<<<<|=======|>>>>>>>)" Assets/Scenes/Nivel1.unity
-```
-> **¿Qué hace este comando?**  
-> Detecta el número de línea exacto donde quedaron restos del conflicto sin limpiar.
-
-Elimina las marcas manuales con `nano`, guarda y Unity cargará la escena con normalidad.
+* **Síntoma:** `remote: error: File Assets/Models/Boss.fbx is 245.00 MB; this exceeds GitHub's file size limit of 100.00 MB`.
+* **Solución de Rescate con `git-filter-repo`:**
+  ```bash
+  sudo apt install -y git-filter-repo
+  # Migrar los archivos pesados a Git LFS en todo el historial
+  git lfs migrate import --include="*.fbx,*.psd,*.blend,*.wav" --everything
+  git push origin --force --all
+  ```
 
 ---
 
-## 8.3 Incidente 3: Subida Accidental de la Carpeta `Library/` (Repositorio Gigante)
+## 10.5 Incidente 5: Shaders Magenta / Rosados tras Clonar en Linux
 
-**Causa:** Se inicializó Git sin `.gitignore` y se subieron 20 GB de cache interna de Unity.
-
-```bash
-# 1. Remover Library del índice de Git sin borrar los archivos locales
-git rm -r --cached Library/
-echo "Library/" >> .gitignore
-git commit -m "chore: remover carpeta Library del control de versiones"
-
-# 2. Purgar el historial para recuperar espacio en GitHub
-sudo apt install -y git-filter-repo
-git filter-repo --path Library --invert-paths --force
-git push origin --force --all
-```
+* **Síntoma:** Todos los materiales de la escena se ven de color rosa/magenta en el Editor de Linux.
+* **Causa:** Falta de paquetes del Render Pipeline (URP/HDRP) o necesidad de recompilación de shaders de Vulkan/OpenGL.
+* **Solución:**
+  1. Ve a **Window -> Package Manager** y verifica que `Universal RP` esté instalado.
+  2. Ve a **Edit -> Rendering -> Materials -> Convert Selected Built-in Materials to URP**.
+  3. En la terminal limpia la caché de shaders si persiste:
+     ```bash
+     rm -rf Library/ShaderCache
+     ```
 
 ---
 
-## 8.4 Incidente 4: Repositorio Bloqueado por Superar el Límite de 100 MB
+## 10.6 Incidente 6: Límite de Almacenamiento y Ancho de Banda de Git LFS Superado
 
-**Causa:** Un modelo 3D o video fue commiteado sin registrar en Git LFS.
-
-```bash
-# Migrar retroactivamente archivos pesados a Git LFS en todo el historial
-git lfs migrate import --include="*.fbx,*.mp4,*.psd,*.wav" --everything
-git push origin --force --all
-```
-> **¿Qué hace este comando?**  
-> Convierte automáticamente todos los archivos pesados históricos en punteros Git LFS, reduciendo el repositorio a pocos megabytes y superando el límite de GitHub.
-
----
-
-## 8.5 Incidente 5: Shaders Magenta / Rosados tras Clonar en Linux
-
-**Causa:** Unity en Linux necesita regenerar la cache de sombreadores para Vulkan u OpenGL.
-
-### Solución:
-1. En el Editor de Unity en Debian, ve a **Edit -> Project Settings -> Graphics**.
-2. En **Universal Render Pipeline (URP)** o **HDRP**, asegúrate de que el asset de Pipeline esté asignado.
-3. Selecciona la carpeta de materiales, haz clic derecho y selecciona **Reimport All**.
+* **Síntoma:** `Git LFS: Repository or organization has exceeded its bandwidth or storage quota`.
+* **Solución:**
+  1. Purgar punteros LFS locales antiguos que ya no están referenciados en ramas activas:
+     ```bash
+     git lfs prune --dry-run
+     git lfs prune
+     ```
+  2. Configurar almacenamiento LFS propio en un servidor S3/MinIO corporativo si se superan las cuotas de GitHub.
 
 ---
 
-## 8.6 Incidente 6: Límite de Ancho de Banda de Git LFS Superado
+## 10.7 Incidente 7: Desfase de Versiones Menores del Editor de Unity
 
-**Causa:** El plan gratuito de GitHub incluye 1 GB de almacenamiento LFS y 1 GB de ancho de banda mensual. Si tu equipo descarga frecuentemente, GitHub bloqueará las descargas de LFS.
-
-### Solución inmediata:
-* En **Settings -> Billing and plans**, compra paquetes de almacenamiento LFS adicionales ($5/mes por 50 GB), o configura un servidor LFS propio alojado en tu infraestructura con `git-lfs-authenticate`.
-
----
-
-## 8.7 Incidente 7: Desfase de Versiones Menores del Editor de Unity
-
-**Causa:** Un desarrollador usa Unity `2022.3.10f1` y otro usa `2022.3.25f1`. Unity reescribe metadatos de serialización en cada commit.
-
-### Solución:
-Crea un archivo `.editorconfig` o `ProjectSettings/ProjectVersion.txt` bloqueado:
-```
-m_EditorVersion: 2022.3.20f1
-m_EditorVersionWithRevision: 2022.3.20f1 (e3215264b312)
-```
-Todo el equipo debe instalar exactamente la misma versión del editor indicada en `ProjectVersion.txt` a través de Unity Hub.
+* **Síntoma:** Las escenas cambian de formato YAML (`m_EditorVersion`) constantemente en cada commit.
+* **Solución:**
+  1. Especifica la versión exacta en `ProjectSettings/ProjectVersion.txt`.
+  2. Todos los integrantes del equipo deben abrir el proyecto a través de **Unity Hub**, el cual descargará la versión exacta requerida por el archivo de configuración.
 
 ---
 
-## 8.8 Incidente 8: Archivos Bloqueados por Procesos de Unity al Conmutar Ramas
+## 10.8 Incidente 8: Archivos Bloqueados por Procesos de Unity en Ejecución
 
-**Causa:** En Linux, Unity puede mantener descriptores de archivo abiertos en segundo plano.
-
-```bash
-# Cerrar Unity antes de hacer operaciones drásticas de rebase
-pkill -f Unity
-git switch rama-destino
-```
-
----
-
-## 8.9 Incidente 9: Fuga de Claves en ScriptableObjects o Archivos de Configuración
-
-Si se commiteó un archivo `.asset` de configuración con tokens:
-
-```bash
-git filter-repo --path Assets/Settings/ServidorConfig.asset --invert-paths --force
-git push origin --force --all
-```
+* **Síntoma:** En Linux, `git checkout` o `git merge` falla con errores de permisos o `cannot unlink`.
+* **Solución:**
+  ```bash
+  # Cerrar completamente el Editor de Unity y procesos en segundo plano
+  killall -9 Unity
+  # Limpiar archivos de bloqueo residuales
+  find . -name "*.lock" -delete
+  git checkout -f
+  ```
 
 ---
 
-## 8.10 Incidente 10: Regeneración Limpia y Segura de la Cache Local
+## 10.9 Incidente 9: Fuga de Claves Privadas en ScriptableObjects o Configuración
 
-Si tras hacer `pull` Unity se comporta de manera errática o produce errores de compilación inexplicables:
+* **Síntoma:** Se commiteó un `GameSettings.asset` que incluía un token de API de Steam o Photon en texto claro.
+* **Solución:**
+  1. Revoca inmediatamente la clave en el panel de desarrollador de Steam/Photon.
+  2. Purga el archivo del historial con:
+     ```bash
+     git filter-repo --path Assets/Resources/GameSettings.asset --invert-paths --force
+     git push origin --force --all
+     ```
 
-```bash
-# Cerrar Unity y borrar la cache local corrupta (es 100% seguro)
-pkill -f Unity
-rm -rf Library/ Temp/ Obj/
-```
-> **¿Qué hace este comando?**  
-> Al volver a abrir Unity, el motor reconstruirá automáticamente toda la carpeta `Library/` limpia a partir de tus assets de Git, resolviendo cualquier anomalía de cache.
+---
+
+## 10.10 Incidente 10: Regeneración Limpia y Segura de la Caché Local del Proyecto
+
+* **Síntoma:** Errores extraños de compilación en C#, referencias rotas que no desaparecen o fallos de renderizado que sólo le ocurren a un miembro del equipo.
+* **Solución (El "Reset Nuclear Seguro" de Unity):**
+  ```bash
+  # 1. Cerrar Unity
+  killall Unity 2>/dev/null
+
+  # 2. Eliminar de forma segura las carpetas temporales locales
+  rm -rf Library/ Temp/ Obj/ Logs/ UserSettings/
+
+  # 3. Abrir de nuevo el proyecto desde Unity Hub
+  # Unity reconstruirá la base de datos de Library limpia en base a los Assets y Packages rastreados en Git.
+  ```
