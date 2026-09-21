@@ -1,20 +1,79 @@
-# Dependencias de Node
+# =====================================================================
+# .gitignore para Repositorio de Manuales Oficiales (GitHub & Unity)
+# =====================================================================
+
+# --- Dependencias y Entornos de Ejecución ---
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+.pnp*
 
-# Archivos de compilación y temporales
+# --- Archivos de Compilación y Temporales HTML ---
 *.temp.html
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
 
-# Archivos de sistema macOS
+# --- Scripts Utilitarios y Herramientas Externas ---
+tools/
+*.py[cod]
+*$py.class
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.venv/
+env/
+venv/
+*.sh
+*.ps1
+*.bat
+*.cmd
+
+# --- Metadatos y Skills Locales de Agentes ---
+.agents/
+skills-lock.json
+
+# --- Configuraciones Locales de IDEs y Editores ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.user
+*.userprefs
+*.workspace
+*.sublime-project
+*.sublime-workspace
+
+# --- Archivos de Sistema Operativo ---
+# macOS
 .DS_Store
 .AppleDouble
 .LSOverride
 ._*
 .Spotlight-V100
 .Trashes
+.DocumentRevisions-V100
+.fseventsd
 
-# Archivos de sistema Windows
+# Windows
 Thumbs.db
-desktop.ini
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# --- Registros y Logs ---
+*.log
+logs/

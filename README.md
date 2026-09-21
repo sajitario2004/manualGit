@@ -240,19 +240,6 @@ npm run build:unity
 
 ---
 
-## 🛠️ Herramientas y Scripts Útiles (`tools/`)
-
-Scripts listos para usar en tus proyectos para automatizar configuraciones y prevenir errores:
-
-| Herramienta | Función | Plataforma |
-| :--- | :--- | :---: |
-| [`tools/unity-meta-checker.py`](tools/unity-meta-checker.py) | Audita la carpeta `Assets/` detectando `.meta` huérfanos, assets sin metadatos, GUIDs duplicados y archivos >100 MB. | Multiplataforma (Python 3) |
-| [`tools/setup-unityyamlmerge.sh`](tools/setup-unityyamlmerge.sh) | Autodetecta la versión instalada de Unity Editor en Unity Hub y configura `UnityYAMLMerge` en Git. | Linux & macOS (Bash) |
-| [`tools/setup-unityyamlmerge.ps1`](tools/setup-unityyamlmerge.ps1) | Autodetecta la versión instalada de Unity Editor en Unity Hub y configura `UnityYAMLMerge.exe` en Git. | Windows (PowerShell) |
-| [`tools/git-hooks/pre-commit`](tools/git-hooks/pre-commit) | Hook de Git para bloquear automáticamente commits con assets sin `.meta` o archivos >100 MB fuera de LFS. | Git Hook (POSIX) |
-
----
-
 ## 📦 Plantillas de Inicio para Unity (`templates/unity-starter/`)
 
 Archivos optimizados listos para copiar y pegar en la raíz de cualquier proyecto nuevo de Unity:
@@ -289,13 +276,6 @@ manualGit/
 │
 ├── assets/                                  # Recursos gráficos del repositorio
 │   └── social-preview.png                   # Banner oficial Open Graph para redes
-│
-├── tools/                                   # Scripts utilitarios para proyectos
-│   ├── unity-meta-checker.py                # Auditor de .meta y GUIDs en Python
-│   ├── setup-unityyamlmerge.sh              # Autoconfigurador para Linux y macOS
-│   ├── setup-unityyamlmerge.ps1             # Autoconfigurador para Windows
-│   └── git-hooks/                           # Hooks de Git preconfigurados
-│       └── pre-commit
 │
 ├── templates/unity-starter/                 # Plantillas de inicio para proyectos Unity
 │   ├── .gitignore
