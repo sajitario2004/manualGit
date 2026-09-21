@@ -8,6 +8,7 @@ on:
       - '**.js'
       - 'package.json'
       - 'UNITY/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [ main ]
     paths:
@@ -15,6 +16,7 @@ on:
       - '**.js'
       - 'package.json'
       - 'UNITY/**'
+      - '.github/workflows/**'
 
 jobs:
   build-pdfs:
@@ -25,10 +27,10 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js
+      - name: Configurar Node.js (LTS)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Verificar / Instalar Google Chrome Headless
@@ -47,9 +49,27 @@ jobs:
         run: npm ci || npm install
 
       - name: Compilar Manuales Generales y de Unity
+        run: npm run build
+
+      - name: Verificar Integridad de los 6 PDFs Generados
         run: |
-          # Crear enlace simbólico para compatibilidad de ruta de Chrome en Linux si es necesario
-          npm run build
+          echo "Verificando que los 6 PDFs existen y tienen contenido..."
+          PDF_FILES=(
+            "manual-github-debian-linux.pdf"
+            "manual-github-powershell-windows.pdf"
+            "manual-github-macos-apple-silicon.pdf"
+            "UNITY/manual-unity-github-debian-linux.pdf"
+            "UNITY/manual-unity-github-powershell-windows.pdf"
+            "UNITY/manual-unity-github-macos-apple-silicon.pdf"
+          )
+          for pdf in "${PDF_FILES[@]}"; do
+            if [ ! -s "$pdf" ]; then
+              echo "❌ Error: $pdf no existe o está vacío"
+              exit 1
+            fi
+            echo "✓ $pdf generado correctamente ($(du -h "$pdf" | cut -f1))"
+          done
+          echo "🎉 ¡Todos los 6 PDFs han sido verificados exitosamente!"
 
       - name: Subir PDFs Compilados como Artefactos
         uses: actions/upload-artifact@v4
