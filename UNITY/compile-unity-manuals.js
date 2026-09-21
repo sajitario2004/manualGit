@@ -616,7 +616,7 @@ function compileManual({ mdPath, pdfPath, osBadge, accentColor, accentLight, bgC
 
   console.log(`Generando PDF: ${pdfPath}`);
   const chromeBin = getChromeBin();
-  const cmd = `"${chromeBin}" --headless=new --disable-gpu --no-pdf-header-footer --print-to-pdf="${pdfPath}" "${tempHtmlPath}"`;
+  const cmd = `"${chromeBin}" --headless=new --disable-gpu --no-sandbox --no-pdf-header-footer --print-to-pdf="${pdfPath}" "${tempHtmlPath}"`;
   
   execSync(cmd, { stdio: 'pipe' });
   fs.unlinkSync(tempHtmlPath);
