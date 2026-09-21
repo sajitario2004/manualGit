@@ -15,6 +15,7 @@
    - 1.4 [La Regla de Oro de los Archivos `.meta` y los GUIDs](#14-la-regla-de-oro-de-los-archivos-meta-y-los-guids)
    - 1.5 [El Archivo `.gitignore` Oficial y Optimizado para Unity](#15-el-archivo-gitignore-oficial-y-optimizado-para-unity)
    - 1.6 [Configuración Exhaustiva de Git LFS con `.gitattributes`](#16-configuración-exhaustiva-de-git-lfs-con-gitattributes)
+   - 1.7 [Arquitectura de Proyectos AAA: Separación de Assets Propios (`_Project/`) vs Plugins](#17-arquitectura-de-proyectos-aaa-separación-de-assets-propios-_project-vs-plugins)
 2. [Parte II: Flujo de Trabajo Esencial Diario (Nivel Novato)](#parte-ii-flujo-de-trabajo-esencial-diario-nivel-novato)
    - 2.1 [Inicializar y Publicar un Proyecto en GitHub (Terminal y GitHub Desktop)](#21-inicializar-y-publicar-un-proyecto-en-github-terminal-y-github-desktop)
    - 2.2 [Clonación Correcta de Proyectos con Git LFS](#22-clonación-correcta-de-proyectos-con-git-lfs)
@@ -25,8 +26,10 @@
    - 3.1 [Estrategia de Ramas en Equipos de Videojuegos (CLI y Desktop)](#31-estrategia-de-ramas-en-equipos-de-videojuegos-cli-y-desktop)
    - 3.2 [Arquitectura de Escenas Divididas (Multi-Scene Editing Aditivo)](#32-arquitectura-de-escenas-divididas-multi-scene-editing-aditivo)
    - 3.3 [Aislamiento de Trabajo Mediante Prefabs Anidados y Variantes](#33-aislamiento-de-trabajo-mediante-prefabs-anidados-y-variantes)
-   - 3.4 [Configuración de UnityYAMLMerge como Mergetool Semántico](#34-configuración-de-unityyamlmerge-como-mergetool-semántico)
+   - 3.4 [Configuración de UnityYAMLMerge y Personalización de Fallback en `mergespecfile.txt`](#34-configuración-de-unityyamlmerge-y-personalización-de-fallback-en-mergespecfiletxt)
    - 3.5 [Uso de Git Stash, Historial y Reversión Segura (CLI y Desktop)](#35-uso-de-git-stash-historial-y-reversión-segura-cli-y-desktop)
+   - 3.6 [Modularización de Código con Assembly Definitions (`.asmdef` y `.asmref`)](#36-modularización-de-código-con-assembly-definitions-asmdef-y-asmref)
+   - 3.7 [Unity Accelerator: Aceleración de Descargas y Caché de Importación en LAN](#37-unity-accelerator-aceleración-de-descargas-y-caché-de-importación-en-lan)
 4. [Parte IV: Soluciones por Temas a Conflictos y Edición Concurrente](#parte-iv-soluciones-por-temas-a-conflictos-y-edición-concurrente)
    - 4.1 [Tema 1: Prevención Arquitectónica de Conflictos en Unity](#41-tema-1-prevención-arquitectónica-de-conflictos-en-unity)
    - 4.2 [Tema 2: Conflictos en Archivos `.meta` (GUID Desincronizado)](#42-tema-2-conflictos-en-archivos-meta-guid-desincronizado)
@@ -43,14 +46,17 @@
    - 5.3 [GitHub Codespaces y Desarrollo en la Nube para Unity](#53-github-codespaces-y-desarrollo-en-la-nube-para-unity)
    - 5.4 [GitHub Copilot CLI para Programadores de Unity](#54-github-copilot-cli-para-programadores-de-unity)
    - 5.5 [Git Hooks y Validación Pre-commit de Archivos `.meta`](#55-git-hooks-y-validación-pre-commit-de-archivos-meta)
+   - 5.6 [Descargas Parciales y Ahorro de Cuota de Git LFS con `lfs.fetchexclude` y `git sparse-checkout`](#56-descargas-parciales-y-ahorro-de-cuota-de-git-lfs-con-lfsfetchexclude-y-git-sparse-checkout)
 6. [Parte VI: Gestión de Paquetes UPM y Dependencias](#parte-vi-gestión-de-paquetes-upm-y-dependencias)
    - 6.1 [Instalación de Paquetes Mediante URLs de Git en UPM](#61-instalación-de-paquetes-mediante-urls-de-git-en-upm)
    - 6.2 [Creación y Publicación de Paquetes UPM en Repositorios Privados con Tokens](#62-creación-y-publicación-de-paquetes-upm-en-repositorios-privados-con-tokens)
+   - 6.3 [Addressables Asset System frente a `Resources/`: Versionado y Despliegue en CDN](#63-addressables-asset-system-frente-a-resources-versionado-y-despliegue-en-cdn)
 7. [Parte VII: Automatización CI/CD con GitHub Actions y GameCI](#parte-vii-automatización-cicd-con-github-actions-y-gameci)
    - 7.1 [Arquitectura de GameCI para Compilaciones de Videojuegos](#71-arquitectura-de-gameci-para-compilaciones-de-videojuegos)
    - 7.2 [Activación de Licencias de Unity en GitHub Actions](#72-activación-de-licencias-de-unity-en-github-actions)
    - 7.3 [Pipeline Automatizado: Tests EditMode/PlayMode y Compilación StandaloneLinux64](#73-pipeline-automatizado-tests-editmodeplaymode-y-compilación-standalonelinux64)
    - 7.4 [Subida Automática de Artefactos de Build](#74-subida-automática-de-artefactos-de-build)
+   - 7.5 [Pruebas Automatizadas con Code Coverage y Reportes en GitHub Actions](#75-pruebas-automatizadas-con-code-coverage-y-reportes-en-github-actions)
 8. [Parte VIII: Seguridad y Políticas de Repositorio en Equipos de Videojuegos](#parte-viii-seguridad-y-políticas-de-repositorio-en-equipos-de-videojuegos)
    - 8.1 [Protección de Ramas y Rulesets](#81-protección-de-ramas-y-rulesets)
    - 8.2 [Gestión de Secretos para APIs de Juegos (Steam, Photon, Firebase)](#82-gestión-de-secretos-para-apis-de-juegos-steam-photon-firebase)
@@ -89,6 +95,8 @@ MiJuegoUnity/
 ├── UserSettings/        --> [¡NUNCA EN GIT!] Distribución de ventanas y preferencias del usuario local.
 └── Logs/                --> [¡NUNCA EN GIT!] Registros de compilación y fallos del editor.
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -130,6 +138,8 @@ flatpak install -y flathub io.github.shifteight.GitHubDesktop
 > **¿Qué hace este comando?**  
 > Proporciona la aplicación nativa gráfica de GitHub Desktop en tu escritorio GNOME, KDE o XFCE de Debian, permitiendo flujos visuales completos para los miembros no técnicos del equipo.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 1.3 Configuración Crítica del Editor: Visible Meta Files y Force Text
@@ -147,6 +157,8 @@ Antes de inicializar Git en cualquier proyecto de Unity, debes verificar dos aju
 
 > [!IMPORTANT]
 > `Force Text` obliga a Unity a guardar todas las escenas (`.unity`), prefabs (`.prefab`), materiales (`.mat`) y configuraciones en texto plano **YAML** en lugar de binario propietario. Esto permite ver diferencias (*diffs*) comprensibles y fusionar cambios en Git.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -167,6 +179,8 @@ guid: e81b8979d46f4eb2a6886e92f25b2901
 > 1. Si mueves o renombras un archivo fuera de Unity (por ejemplo en la terminal), **DEBES mover o renombrar su `.meta` idénticamente**.
 > 2. Si eliminas un asset, **DEBES eliminar su archivo `.meta`**.
 > 3. Al hacer commit, **NUNCA hagas commit de un asset sin su archivo `.meta` acompañante**. Si rompes esta regla, los componentes aparecerán en las escenas como **"Missing (Script)"** o los materiales perderán sus texturas.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -225,6 +239,8 @@ sysinfo.txt
 .DS_Store
 Thumbs.db
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -292,6 +308,36 @@ Crea el archivo `.gitattributes` en la raíz del proyecto para indicarle a Git q
 *.meta text eol=lf
 ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
+---
+
+## 1.7 Arquitectura de Proyectos AAA: Separación de Assets Propios (`_Project/`) vs Plugins
+
+En estudios profesionales de desarrollo de videojuegos, colocar assets en la raíz de `Assets/` es una práctica desaconsejada. Cuando importas paquetes de la Asset Store de Unity, sus carpetas se mezclan con tu código fuente, ensuciando los diffs de Git y provocando colisiones accidentales de `.meta`.
+
+### Patrón Recomendado: La Carpeta Raíz de Proyecto
+Crea una carpeta raíz con guion bajo (para que aparezca primera en el explorador de Unity):
+
+```
+Assets/
+├── _Project/                --> [CÓDIGO Y ASSETS PROPIOS DEL ESTUDIO]
+│   ├── Art/                 --> Modelos 3D, Texturas, Materiales propios
+│   ├── Audio/               --> Música y efectos SFX
+│   ├── Core/                --> GameManagers, Singletons, Arquitectura
+│   ├── Gameplay/            --> Mecánicas, Jugador, Enemigos
+│   ├── Prefabs/             --> Entidades modulares del juego
+│   ├── Scenes/              --> Escenas aditivas
+│   └── UI/                  --> Menús, fuentes y HUD
+├── Plugins/                 --> SDKs externos que requieren ubicación fija
+└── ThirdParty/              --> Assets descargados de la Asset Store (solo lectura)
+```
+
+> [!TIP]
+> Al mantener todo tu trabajo en `Assets/_Project/`, puedes configurar reglas de `CODEOWNERS` y permisos de Git con gran sencillez, y actualizar o borrar paquetes de terceros en `ThirdParty/` sin temor a afectar tus propios scripts y escenas.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 # Parte II: Flujo de Trabajo Esencial Diario (Nivel Novato)
@@ -322,6 +368,8 @@ gh repo create MiVideojuego --private --source=. --remote=origin --push
 ![Adición o Clonación de Proyecto Unity en GitHub Desktop](images/gh_desktop_clone_add.jpg)
 <span class="caption-text">Figura 2.1: Cuadro de diálogo 'Add Existing Repository' en GitHub Desktop seleccionando la carpeta del proyecto Unity.</span>
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 2.2 Clonación Correcta de Proyectos con Git LFS
@@ -344,6 +392,8 @@ git lfs pull
 3. Elige la ruta local de destino en tu disco y pulsa **Clone**.
 4. GitHub Desktop detecta automáticamente Git LFS y descargará los modelos 3D y texturas sin requerir comandos adicionales.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 2.3 El Ciclo de Trabajo Seguro: Modificar, Inspeccionar y Confirmar Commits
@@ -356,8 +406,8 @@ El ciclo en Unity exige revisar que cada asset modificado vaya acompañado de su
 git status
 
 # 2. Agregar cambios asegurando que archivos y sus .meta vayan juntos
-git add Assets/Scripts/PlayerController.cs Assets/Scripts/PlayerController.cs.meta
-git add Assets/Prefabs/Player.prefab Assets/Prefabs/Player.prefab.meta
+git add Assets/_Project/Scripts/PlayerController.cs Assets/_Project/Scripts/PlayerController.cs.meta
+git add Assets/_Project/Prefabs/Player.prefab Assets/_Project/Prefabs/Player.prefab.meta
 
 # 3. Confirmar cambios con mensaje descriptivo
 git commit -m "feat(player): añadir salto e impulso de física con Rigidbody2D"
@@ -375,6 +425,8 @@ git commit -m "feat(player): añadir salto e impulso de física con Rigidbody2D"
 ![Gestión de Cambios, Archivos .meta y Commits en GitHub Desktop](images/gh_desktop_commit_changes.jpg)
 <span class="caption-text">Figura 2.2: Interfaz de GitHub Desktop mostrando la verificación en pareja de scripts y sus archivos .meta antes de confirmar el commit.</span>
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 2.4 Conventional Commits Aplicados al Desarrollo de Videojuegos
@@ -390,6 +442,8 @@ Usa prefijos estandarizados para que el historial sea comprensible por programad
 | `audio:` | Efectos de sonido, música de fondo y mixers | `audio(ui): integrar sonido de clic y confirmación de compra` |
 | `perf:` | Optimización de draw calls, LODs o GC Alloc | `perf(rendering): reducir uso de memoria mediante Texture Compression ASTC` |
 | `chore:` | Actualización de dependencias UPM o gitignore | `chore(deps): actualizar Cinemachine a version 2.9.7` |
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -410,6 +464,8 @@ git push origin main
 2. Si existen cambios nuevos, el botón cambiará a **Pull origin** con un contador.
 3. Haz clic en **Pull origin** para recibir los cambios.
 4. Finalmente, haz clic en **Push origin** para enviar tus commits a GitHub.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -443,6 +499,8 @@ git push -u origin feature/sistema-inventario
 ![Gestión de Ramas y Creación de Feature Branches en GitHub Desktop](images/gh_desktop_branch.jpg)
 <span class="caption-text">Figura 3.1: Menú desplegable 'Current Branch' en GitHub Desktop para creación y conmutación de ramas de trabajo.</span>
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 3.2 Arquitectura de Escenas Divididas (Multi-Scene Editing Aditivo)
@@ -458,7 +516,7 @@ Nivel01 (Estructura de Escenas):
 ```
 
 ### Script C# para Carga Aditiva en Tiempo de Ejecución:
-Guarda este script en `Assets/Scripts/SceneLoader.cs`:
+Guarda este script en `Assets/_Project/Scripts/SceneLoader.cs`:
 ```csharp
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -487,6 +545,8 @@ public class SceneLoader : MonoBehaviour
 > **Beneficio en Git:**  
 > El artista trabaja en `Nivel01_Geometry.unity`, el iluminador en `Nivel01_Lighting.unity` y el programador en `Nivel01_Core.unity`. Cada persona modifica un archivo físico diferente, logrando **cero conflictos de fusión**.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 3.3 Aislamiento de Trabajo Mediante Prefabs Anidados y Variantes
@@ -496,22 +556,37 @@ Las escenas deben contener únicamente instancias de Prefabs, no GameObjects cru
 1. **Evita la modificación directa en la jerarquía de la escena:** Si necesitas alterar el comportamiento o los componentes de un enemigo, abre su archivo `.prefab` en el **Prefab Mode**.
 2. **Usa Variantes de Prefab:** Crea un prefab base `EnemigoBase.prefab` y genera variantes como `EnemigoFuego.prefab` y `EnemigoHielo.prefab`. Las variaciones sólo guardan las diferencias (*overrides*), manteniendo los diffs de Git limpios y atómicos.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
-## 3.4 Configuración de UnityYAMLMerge como Mergetool Semántico
+## 3.4 Configuración de UnityYAMLMerge y Personalización de Fallback en `mergespecfile.txt`
 
-Unity incluye su propia herramienta de fusión tridireccional diseñada para entender la estructura interna de archivos YAML de Unity (como Transform, GameObjects y Componentes):
+UnityYAMLMerge es la herramienta tridireccional nativa de Unity diseñada para interpretar la estructura abstracta de árbol (AST) de escenas y prefabs YAML.
 
+### Configuración del Driver de Fusión en Git
 ```bash
-# Configuración global del motor de fusión UnityYAMLMerge en Debian
+# Configuración global de UnityYAMLMerge en Debian Linux
 git config --global merge.unityyamlmerge.name "Unity Smart Merge"
 git config --global merge.unityyamlmerge.driver \
-  "~/Unity/Hub/Editor/$(ls ~/Unity/Hub/Editor | tail -n 1)/Editor/Data/Tools/UnityYAMLMerge merge -h -p -- '%O' '%B' '%A' '%A'"
+  "~/Unity/Hub/Editor/$(ls -1 ~/Unity/Hub/Editor 2>/dev/null | tail -n 1)/Editor/Data/Tools/UnityYAMLMerge merge -p -- '%O' '%B' '%A' '%A'"
 git config --global merge.unityyamlmerge.trustExitCode true
 git config --global merge.unityyamlmerge.recursive binary
 ```
-> **¿Qué hace este comando?**  
-> Vincula el ejecutable `UnityYAMLMerge` de la versión instalada más reciente en tu Unity Hub como el motor de fusión predeterminado para archivos `.unity` y `.prefab`. Resuelve de manera autónoma más del 90% de conflictos en escenas.
+> **El parámetro `-p` (Pre-merge):**  
+> Indica a UnityYAMLMerge que resuelva automáticamente los nodos independientes (por ejemplo, dos GameObjects diferentes añadidos por desarrolladores distintos). Si dos personas tocaron el mismo componente, UnityYAMLMerge delegará el conflicto restante al editor visual configurado en `mergespecfile.txt`.
+
+### Configuración del Fallback Visual en `mergespecfile.txt`
+En la misma carpeta de `UnityYAMLMerge` se encuentra el archivo `mergespecfile.txt`. Ábrelo y configura tu herramienta visual favorita como fallback:
+
+```ini
+# mergespecfile.txt (Ejemplo para VS Code en Linux)
+unity use "%programs%/Unity/Hub/Editor/.../UnityYAMLMerge" merge -p "%b" "%t" "%d"
+* use "code" --wait --merge "%b" "%t" "%d" "%d"
+```
+> Cuando un conflicto no pueda resolverse automáticamente, UnityYAMLMerge abrirá automáticamente Visual Studio Code en modo de fusión visual tridireccional con los marcadores listos.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -543,6 +618,63 @@ git stash pop
 ![Historial de Commits e Inspección de Cambios en GitHub Desktop](images/gh_desktop_history.jpg)
 <span class="caption-text">Figura 3.2: Pestaña 'History' de GitHub Desktop con el menú contextual de reversión y creación de ramas a partir de commits previos.</span>
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
+---
+
+## 3.6 Modularización de Código con Assembly Definitions (`.asmdef` y `.asmref`)
+
+En proyectos de Unity medianos y grandes, todos los scripts de C# se compilan por defecto en una única librería gigante llamada `Assembly-CSharp.dll`. Cada vez que cualquier programador cambia una sola línea de código o se hace un `git pull`, Unity recompila todo el proyecto, tardando entre 30 segundos y varios minutos.
+
+### La Solución Profesional: Archivos `.asmdef`
+Divide tu código en ensamblados modulares:
+* `Assets/_Project/Core/Game.Core.asmdef`
+* `Assets/_Project/Gameplay/Game.Gameplay.asmdef` (depende de `Game.Core`)
+* `Assets/_Project/UI/Game.UI.asmdef` (depende de `Game.Core`)
+* `Assets/_Project/Editor/Game.Editor.asmdef` (marcado como Editor Only)
+
+```json
+{
+    "name": "Game.Gameplay",
+    "references": [
+        "Game.Core",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+```
+
+> **Beneficios Inmediatos en Git:**  
+> 1. **Tiempos de Compilación:** Si un commit modifica un script en `Game.Gameplay`, Unity compila únicamente esa DLL en 1 segundo.  
+> 2. **Pull Requests Limpios:** El revisor sabe con exactitud qué módulo del juego fue afectado.  
+> 3. **Arquitectura Desacoplada:** Impide referencias circulares accidentales entre sistemas.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
+---
+
+## 3.7 Unity Accelerator: Aceleración de Descargas y Caché de Importación en LAN
+
+Cuando un equipo de 10 personas hace `git pull` de un nuevo modelo 3D o paquete de texturas, normalmente cada máquina ejecuta localmente la conversión a compresión ASTC/DXT y la generación de mipmaps, saturando las CPUs durante horas.
+
+**Unity Accelerator** actúa como un servidor de caché proxy en la red local del estudio (LAN):
+1. El primer desarrollador o el runner de CI/CD que importa el asset sube el resultado procesado al Accelerator local.
+2. Cuando el resto de compañeros hace `git pull`, Unity descarga directamente el asset ya procesado a velocidad de red local (Gigabit/10Gbps), reduciendo reimportaciones de 45 minutos a escasos 15 segundos.
+
+### Configuración en Unity Editor:
+* Ve a **Edit -> Project Settings -> Editor -> Unity Accelerator**.
+* Introduce la IP o nombre de host de tu servidor local de Accelerator (ej. `192.168.1.50:10080`).
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 # Parte IV: Soluciones por Temas a Conflictos y Edición Concurrente
@@ -551,6 +683,8 @@ git stash pop
 * **Multi-Scene:** Divide los niveles en subescenas funcionales.
 * **Prefabs Anidados:** Realiza modificaciones dentro de los prefabs, nunca en el árbol de la escena.
 * **Comunicación de Equipo:** Notifica en el canal de Slack/Discord antes de modificar un prefab compartido (`Player.prefab` o `MainCamera.prefab`).
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -563,7 +697,7 @@ Ocurre cuando dos personas añaden un asset con el mismo nombre o mueven carpeta
 git status
 
 # Visualizar el conflicto
-git diff Assets/Textures/Pasto.png.meta
+git diff Assets/_Project/Textures/Pasto.png.meta
 ```
 
 ### Solución Paso a Paso:
@@ -571,9 +705,11 @@ git diff Assets/Textures/Pasto.png.meta
 2. Abre el `.meta` en tu editor de texto y quédate con un único bloque `guid:` limpio.
 3. En la consola o en GitHub Desktop confirma la resolución:
 ```bash
-git add Assets/Textures/Pasto.png.meta
+git add Assets/_Project/Textures/Pasto.png.meta
 git commit -m "fix(meta): resolver colisión de GUID en textura Pasto"
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -606,9 +742,11 @@ Cuando dos programadores modifican la misma función en un script:
 ```
 2. Guarda el archivo y confirma:
 ```bash
-git add Assets/Scripts/PlayerController.cs
+git add Assets/_Project/Scripts/PlayerController.cs
 git commit -m "fix(player): fusionar comprobación de suelo con impulso de salto"
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -626,13 +764,15 @@ git mergetool -t unityyamlmerge
 
 ### Modalidad B: Vía GitHub Desktop
 1. Tras un merge o pull conflictivo, GitHub Desktop abre la ventana modal **Resolve conflicts before merging**.
-2. Verás los archivos conflictivos señalados con un icono amarillo de advertencia (ej. `Assets/Scenes/Level01.unity`).
+2. Verás los archivos conflictivos señalados con un icono amarillo de advertencia (ej. `Assets/_Project/Scenes/Level01.unity`).
 3. En el menú desplegable junto al archivo, haz clic en **Open in UnityYAMLMerge** (o **Open in External Program**).
 4. La herramienta resolverá el árbol semántico y marcará el conflicto como resuelto.
 5. Haz clic en el botón azul **Resolve Conflicts** para finalizar el commit de fusión.
 
 ![Resolución de Conflictos en Unity con GitHub Desktop y UnityYAMLMerge](images/gh_desktop_conflict.jpg)
 <span class="caption-text">Figura 4.1: Ventana de resolución de conflictos en GitHub Desktop permitiendo derivar la escena a UnityYAMLMerge o elegir versiones completas.</span>
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -643,19 +783,21 @@ Si un asset binario o una escena sufrieron una colisión irresoluble y se decide
 ### Modalidad A: Vía Terminal
 ```bash
 # Opción 1: Conservar tu versión local intacta y descartar la del servidor
-git checkout --ours Assets/Scenes/Level01.unity
-git add Assets/Scenes/Level01.unity
+git checkout --ours Assets/_Project/Scenes/Level01.unity
+git add Assets/_Project/Scenes/Level01.unity
 git commit -m "resolve: conservar versión local de Level01"
 
 # Opción 2: Descartar tu versión y adoptar al 100% la del servidor remoto
-git checkout --theirs Assets/Scenes/Level01.unity
-git add Assets/Scenes/Level01.unity
+git checkout --theirs Assets/_Project/Scenes/Level01.unity
+git add Assets/_Project/Scenes/Level01.unity
 git commit -m "resolve: aceptar versión del servidor de Level01"
 ```
 
 ### Modalidad B: Vía GitHub Desktop
 1. En la modal de **Resolve conflicts before merging**, haz clic en la flecha desplegable del archivo.
 2. Selecciona **Use Modified Version** (para aceptar tu versión) o **Use Existing Version** (para aceptar la remota).
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -670,8 +812,10 @@ git stash pop
 ```
 > Si al hacer `stash pop` surgen conflictos en archivos autogenerados de Unity, descarta los temporales con:
 ```bash
-git checkout -- Assets/Scenes/AutoSavedScene.unity
+git checkout -- Assets/_Project/Scenes/AutoSavedScene.unity
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -685,6 +829,8 @@ git push origin main
 ```
 > El uso de `rebase` mantiene una línea temporal limpia en la que los punteros de Git LFS se descargan en estricto orden cronológico.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 4.8 Tema 8: Conflictos en Binarios y Bloqueo con Git LFS Lock
@@ -693,21 +839,23 @@ Los archivos binarios (modelos 3D `.blend`/`.fbx`, texturas `.psd`, audios) **no
 
 ```bash
 # 1. Bloquear el archivo antes de comenzar a pintar o modelar
-git lfs lock Assets/Art/Personaje/Heroe.psd
+git lfs lock Assets/_Project/Art/Personajes/Heroe.psd
 
 # 2. Verificar qué archivos están bloqueados y por quién
 git lfs locks
 
 # 3. Trabajar en el archivo, guardarlo y subirlo
-git add Assets/Art/Personaje/Heroe.psd
+git add Assets/_Project/Art/Personajes/Heroe.psd
 git commit -m "art(heroe): finalizar detalles de sombras en textura PSD"
 git push origin main
 
 # 4. Liberar el bloqueo para que otros compañeros puedan editarlo
-git lfs unlock Assets/Art/Personaje/Heroe.psd
+git lfs unlock Assets/_Project/Art/Personajes/Heroe.psd
 ```
 > **¿Qué hace este comando?**  
 > Informa al servidor de GitHub que el archivo está bajo edición exclusiva, bloqueando el push de cualquier otro usuario sobre ese asset hasta que sea liberado.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -717,9 +865,11 @@ Si un desarrollador eliminó un archivo y otro compañero modificó únicamente 
 
 ```bash
 # Si el archivo original ya no debe existir:
-git rm Assets/Scripts/OldScript.cs.meta
+git rm Assets/_Project/Scripts/OldScript.cs.meta
 git commit -m "chore: purgar archivo .meta huérfano"
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -745,6 +895,8 @@ git worktree remove ../MiJuego-Bugfix
 > **Beneficio clave:**  
 > Tu instancia principal de Unity no sufre ninguna reimportación de assets ni pierde la caché de compilación de shaders.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 5.2 Depuración Binaria con Git Bisect y Blame en C#
@@ -765,6 +917,8 @@ git bisect good  # o: git bisect bad
 git bisect reset
 ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 5.3 GitHub Codespaces y Desarrollo en la Nube para Unity
@@ -777,6 +931,8 @@ gh codespace create --repo mi-organizacion/MiVideojuego --branch main
 ```
 > Permite revisar PRs, editar código C# con intellisense y compilar librerías en un entorno Linux en la nube con VS Code en el navegador.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 5.4 GitHub Copilot CLI para Programadores de Unity
@@ -786,6 +942,8 @@ gh codespace create --repo mi-organizacion/MiVideojuego --branch main
 gh copilot suggest "como buscar que commit modifico el prefab de Player.prefab"
 gh copilot explain "git lfs prune --dry-run"
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -817,6 +975,39 @@ EOF
 chmod +x .git/hooks/pre-commit
 ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
+---
+
+## 5.6 Descargas Parciales y Ahorro de Cuota de Git LFS con `lfs.fetchexclude` y `git sparse-checkout`
+
+En proyectos de escala AAA donde el repositorio completo contiene más de 100 GB de datos binarios, los ingenieros de gameplay o programadores de red no necesitan descargar modelos 4K ni pistas de audio de niveles en los que no trabajan.
+
+### Filtrado de Descarga de Git LFS (`lfs.fetchexclude`)
+Configura Git LFS para omitir carpetas de arte pesadas localmente:
+
+```bash
+# Excluir de la descarga de LFS los niveles 04 en adelante y vídeos cinemáticos
+git config lfs.fetchexclude "Assets/_Project/Art/Levels/Nivel04/*, Assets/_Project/Cinematics/*"
+
+# Descargar únicamente los punteros LFS necesarios
+git lfs pull
+```
+> Los archivos excluidos se mantendrán como punteros de texto ligero (130 bytes), permitiendo que Unity compile el código sin descargar 60 GB de texturas a tu disco.
+
+### Git Sparse-Checkout para Repositorios Gigantes
+Si el repositorio es masivo, descarga únicamente las carpetas que te corresponden:
+
+```bash
+# Activar sparse-checkout en modo cono
+git sparse-checkout init --cone
+
+# Definir las carpetas de tu área de trabajo
+git sparse-checkout set Assets/_Project/Scripts Assets/_Project/Core Packages ProjectSettings
+```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 # Parte VI: Gestión de Paquetes UPM y Dependencias
@@ -835,6 +1026,8 @@ Añade esto a `Packages/manifest.json`:
 }
 ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 6.2 Creación y Publicación de Paquetes UPM en Repositorios Privados con Tokens
@@ -848,6 +1041,28 @@ email = "desarrollador@mi-empresa.com"
 alwaysAuth = true
 ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
+---
+
+## 6.3 Addressables Asset System frente a `Resources/`: Versionado y Despliegue en CDN
+
+La carpeta `Resources/` de Unity es un anti-patrón severo en producción: todo asset dentro de ella se compila de forma monolítica en el binario final del juego, inflando los tiempos de carga e impidiendo parches remotos.
+
+### La Solución: Addressables (`com.unity.addressables`)
+El sistema Addressables desacopla las referencias a assets mediante claves (`AssetReference`), permitiendo alojar bundles en servidores remotos (Amazon S3 / Cloudflare R2).
+
+### Qué se versiona en Git y qué se ignora:
+* **En Git:** Versiona `Assets/AddressableAssetSettings/` (los esquemas de grupos, perfiles de URL remota y catálogos de configuración YAML).
+* **Fuera de Git:** Ignora `ServerData/` (la carpeta donde Unity compila los AssetBundles binarios locales).
+
+```gitignore
+# Exclusión de compilación local de Addressables en .gitignore
+[Ss]erver[Dd]ata/
+```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 # Parte VII: Automatización CI/CD con GitHub Actions y GameCI
@@ -855,6 +1070,8 @@ alwaysAuth = true
 ## 7.1 Arquitectura de GameCI para Compilaciones de Videojuegos
 
 GameCI utiliza imágenes de Docker optimizadas con el Editor de Unity preinstalado para ejecutar pruebas automatizadas y compilar builds standalone desatendidas.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -864,6 +1081,8 @@ GameCI utiliza imágenes de Docker optimizadas con el Editor de Unity preinstala
    - `UNITY_EMAIL`: Tu correo de la cuenta de Unity.
    - `UNITY_PASSWORD`: Tu contraseña de Unity.
    - `UNITY_LICENSE`: El contenido en texto de tu archivo de licencia (.ulf).
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -940,11 +1159,42 @@ jobs:
           path: build/StandaloneLinux64
 ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 7.4 Subida Automática de Artefactos de Build
 
 Los binarios resultantes de la compilación (`.x86_64`) quedan disponibles inmediatamente para su descarga en la pestaña **Actions** de GitHub como artefactos comprimidos zip.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
+---
+
+## 7.5 Pruebas Automatizadas con Code Coverage y Reportes en GitHub Actions
+
+En producciones profesionales, cada Pull Request debe validar no solo que el juego compila, sino que la cobertura de pruebas de código no disminuya.
+
+Integrando el paquete oficial `com.unity.test-framework.code-coverage`:
+```yaml
+      - name: Ejecutar Tests con Cobertura de Código
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          customParameters: -enableCodeCoverage -coverageResultsPath ./coverage-results -coverageOptions generateAdditionalMetrics;generateHtmlReport;generateBadgeReport
+
+      - name: Publicar Reporte de Cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: Code-Coverage-Report
+          path: ./coverage-results
+```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -957,11 +1207,15 @@ Configura una regla en **Settings -> Rules -> Rulesets** sobre la rama `main`:
 2. **Require status checks to pass:** Exigir que el job `🧪 Pruebas Unitarias (PlayMode & EditMode)` apruebe sin fallos.
 3. **Block force pushes:** Prohíbe terminantemente `git push --force`.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 8.2 Gestión de Secretos para APIs de Juegos (Steam, Photon, Firebase)
 
 Nunca incluyas tokens de Steamworks, claves de Photon Cloud o credenciales de backend dentro de scripts C# o ScriptableObjects que se suban al repositorio público. Utiliza archivos `.env` o `.json` excluidos en el `.gitignore` y cargados en runtime mediante variables de entorno.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -971,13 +1225,16 @@ Crea `.github/CODEOWNERS` para que las revisiones se soliciten automáticamente 
 
 ```
 # Gobernanza del proyecto de Unity
-Assets/Scripts/           @equipo-programacion
-Assets/Art/               @lead-artist
-Assets/Audio/             @disenador-sonoro
-Assets/Scenes/            @lead-level-designer
-ProjectSettings/          @tech-lead
-.github/                  @devops-lead
+Assets/_Project/Core/       @lead-architect
+Assets/_Project/Scripts/    @equipo-programacion
+Assets/_Project/Art/        @lead-artist
+Assets/_Project/Audio/      @disenador-sonoro
+Assets/_Project/Scenes/     @lead-level-designer
+ProjectSettings/            @tech-lead
+.github/                    @devops-lead
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -989,6 +1246,8 @@ ProjectSettings/          @tech-lead
 git tag -a v1.0.0 -m "release: versión 1.0.0 Gold Master para Linux"
 git push origin v1.0.0
 ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -1002,6 +1261,8 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
 > **¿Qué hace este comando?**  
 > Publica un release formal en GitHub con el binario comprimido descargable por la comunidad o los testers de control de calidad (QA).
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 # Parte X: Catálogo Maestro de Incidentes Críticos de Unity en Linux
@@ -1013,10 +1274,12 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
 * **Solución de Rescate:**
   1. Busca el GUID original en el historial de Git:
      ```bash
-     git log -p -S "guid:" Assets/Scripts/Heroe.cs.meta
+     git log -p -S "guid:" Assets/_Project/Scripts/Heroe.cs.meta
      ```
-  2. Edita `Assets/Scripts/Heroe.cs.meta` y restaura el valor `guid:` original.
+  2. Edita `Assets/_Project/Scripts/Heroe.cs.meta` y restaura el valor `guid:` original.
   3. Abre Unity y recarga los assets con **Assets -> Reimport All**.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -1026,13 +1289,15 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
 * **Solución:**
   1. Revisa los marcadores de fusión residuales (`<<<<<<<`, `=======`, `>>>>>>>`):
      ```bash
-     grep -n "<<<<<<<" Assets/Scenes/Nivel01.unity
+     grep -n "<<<<<<<" Assets/_Project/Scenes/Nivel01.unity
      ```
   2. Elimina todas las líneas de marcadores de conflicto dejando el archivo YAML válido.
   3. Si la escena continúa corrupta, descarta los cambios locales y vuelve a la versión del último commit funcional:
      ```bash
-     git checkout HEAD -- Assets/Scenes/Nivel01.unity
+     git checkout HEAD -- Assets/_Project/Scenes/Nivel01.unity
      ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -1048,6 +1313,8 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
      ```
   2. Asegurarse de que `[Ll]ibrary/` esté presente en `.gitignore`.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 10.4 Incidente 4: Repositorio Bloqueado por Superar el Límite de 100 MB
@@ -1060,6 +1327,8 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
   git lfs migrate import --include="*.fbx,*.psd,*.blend,*.wav" --everything
   git push origin --force --all
   ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -1075,6 +1344,8 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
      rm -rf Library/ShaderCache
      ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 10.6 Incidente 6: Límite de Almacenamiento y Ancho de Banda de Git LFS Superado
@@ -1088,6 +1359,8 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
      ```
   2. Configurar almacenamiento LFS propio en un servidor S3/MinIO corporativo si se superan las cuotas de GitHub.
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 10.7 Incidente 7: Desfase de Versiones Menores del Editor de Unity
@@ -1096,6 +1369,8 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
 * **Solución:**
   1. Especifica la versión exacta en `ProjectSettings/ProjectVersion.txt`.
   2. Todos los integrantes del equipo deben abrir el proyecto a través de **Unity Hub**, el cual descargará la versión exacta requerida por el archivo de configuración.
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -1111,6 +1386,8 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
   git checkout -f
   ```
 
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
+
 ---
 
 ## 10.9 Incidente 9: Fuga de Claves Privadas en ScriptableObjects o Configuración
@@ -1120,9 +1397,11 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
   1. Revoca inmediatamente la clave en el panel de desarrollador de Steam/Photon.
   2. Purga el archivo del historial con:
      ```bash
-     git filter-repo --path Assets/Resources/GameSettings.asset --invert-paths --force
+     git filter-repo --path Assets/_Project/Settings/GameSettings.asset --invert-paths --force
      git push origin --force --all
      ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>
 
 ---
 
@@ -1140,3 +1419,5 @@ gh release create v1.0.0 ./build/MiVideojuego-Linux.tar.gz \
   # 3. Abrir de nuevo el proyecto desde Unity Hub
   # Unity reconstruirá la base de datos de Library limpia en base a los Assets y Packages rastreados en Git.
   ```
+
+<div class="back-to-index"><a href="#índice-de-contenidos">↑ Volver al Índice de Contenidos</a></div>

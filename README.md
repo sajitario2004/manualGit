@@ -59,11 +59,16 @@ Ubicados en la carpeta [`UNITY/`](UNITY/), estos manuales abordan exhaustivament
 ### Puntos Clave de la Guía de Unity:
 1. **Regla de Oro de los `.meta` y GUIDs:** Comprensión profunda de cómo Unity vincula scripts, texturas y componentes para evitar el temido error `"Missing Script"`.
 2. **Serialización YAML & Force Text:** Configuración obligatoria del editor para diffs legibles y resolubles por herramientas de fusión.
-3. **Gestión de Binarios con Git LFS:** Plantilla completa de `.gitattributes` con bloqueo concurrente (`git lfs lock`) para modelos 3D (FBX/OBJ/blend), texturas pesadas (PSD/EXR), audios y vídeos.
-4. **UnityYAMLMerge como Mergetool Semántico:** Integración del motor de fusión nativo de Unity en Git para resolver automáticamente conflictos en escenas (`.unity`) y prefabs (`.prefab`).
-5. **Arquitectura Multi-Scene Aditiva y Prefabs:** Técnicas profesionales de diseño para que equipos de artistas, diseñadores de niveles y programadores trabajen simultáneamente sin pisarse.
-6. **GameCI & CI/CD Automatizado:** Workflows de GitHub Actions para ejecutar suites de tests EditMode/PlayMode y compilar ejecutables standalone automáticamente.
-7. **Catálogo de 10 Incidentes Críticos en Unity:** Reparación de repositorios gigantes por subida accidental de `Library/`, archivos >100MB, desincronización de GUIDs, shaders magenta y procesos bloqueados.
+3. **Arquitectura AAA de Carpetas (`Assets/_Project/`):** Aislamiento estricto de assets y código propio frente a paquetes de la Unity Asset Store y plugins nativos.
+4. **Gestión de Binarios con Git LFS y Locks:** Plantilla completa de `.gitattributes` con bloqueo concurrente (`git lfs lock`) para modelos 3D (FBX/OBJ/blend), texturas pesadas (PSD/EXR), audios y vídeos.
+5. **UnityYAMLMerge y Fallback en `mergespecfile.txt`:** Integración del motor de fusión nativo de Unity en Git con configuración tridireccional para Visual Studio, JetBrains Rider, Beyond Compare, FileMerge o VS Code.
+6. **Modularización con Assembly Definitions (`.asmdef` y `.asmref`):** Eliminación de cuellos de botella al compilar `Assembly-CSharp.dll`, reduciendo tiempos de espera tras commits y pulls a menos de 1 segundo.
+7. **Unity Accelerator en Red Local (LAN):** Servidor proxy de caché para eliminar tiempos de reimportación y transcodificación de texturas y shaders entre estaciones de trabajo.
+8. **Descargas Parciales con `lfs.fetchexclude` y `sparse-checkout`:** Técnicas de optimización para programadores y diseñadores en repositorios gigantes de más de 100 GB.
+9. **Addressables Asset System frente a `Resources/`:** Desacoplamiento de bundles para CDN remota y versionado selectivo en Git.
+10. **GameCI & CI/CD Automatizado con Code Coverage:** Workflows de GitHub Actions para pruebas EditMode/PlayMode, generación de reportes de cobertura (`com.unity.test-framework.code-coverage`) y compilación standalone (.exe, .app, .x86_64).
+11. **Catálogo de 10 Incidentes Críticos en Unity:** Recuperación de repositorios gigantes por `Library/`, archivos >100MB, GUIDs desincronizados, shaders magenta y procesos bloqueados.
+12. **Navegación Interna Bidireccional en PDFs:** Índice interactivo donde cada enlace salta exactamente a la sección correspondiente en el PDF, con botón integrado de retorno al índice en cada apartado.
 
 ---
 

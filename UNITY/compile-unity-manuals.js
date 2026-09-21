@@ -4,8 +4,31 @@ const { execSync } = require('child_process');
 const { marked } = require('marked');
 const hljs = require('highlight.js');
 
-// Custom code renderer with highlight.js
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/\s+/g, '-');
+}
+
+function asciiSlug(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-');
+}
+
+// Custom code and heading renderer with highlight.js
 const renderer = {
+  heading(item) {
+    const slug = slugify(item.text);
+    const ascii = asciiSlug(item.text);
+    const anchorAscii = ascii !== slug ? `<a id="${ascii}" class="anchor-target"></a>` : '';
+    return `<h${item.depth} id="${slug}">${anchorAscii}${item.text}</h${item.depth}>\n`;
+  },
   code({ text, lang }) {
     const validLang = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
     let highlighted;
@@ -108,6 +131,46 @@ function getCss(accentColor, accentLight, bgCoverGrad, osBadge) {
     display: block;
     margin-bottom: 14px;
     font-style: italic;
+  }
+
+  a {
+    color: #0969da;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .back-to-index {
+    text-align: right;
+    margin: 8px 0 22px 0;
+    font-size: 8pt;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .back-to-index a {
+    color: #57606a;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    display: inline-block;
+  }
+
+  .back-to-index a:hover {
+    color: #0969da;
+    background: #eaeef2;
+    border-color: #0969da;
+    text-decoration: none;
+  }
+
+  .anchor-target {
+    position: relative;
+    top: -15px;
+    visibility: hidden;
   }
 
   /* COVER PAGE */
