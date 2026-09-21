@@ -1,29 +1,53 @@
 # Manuales Oficiales de GitHub: De Novato a Avanzado 🚀
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Unity](https://img.shields.io/badge/Unity-2022%20LTS%20%2F%20Unity%206-black.svg?logo=unity)](UNITY/)
 [![Platform - Debian](https://img.shields.io/badge/Platform-Debian%20GNU%2FLinux-d70a53.svg?logo=debian)](manual-github-debian-linux.md)
 [![Platform - Windows](https://img.shields.io/badge/Platform-Windows%20PowerShell-0078d4.svg?logo=powershell)](manual-github-powershell-windows.md)
 [![Platform - macOS](https://img.shields.io/badge/Platform-macOS%20Apple%20Silicon-2997ff.svg?logo=apple)](manual-github-macos-apple-silicon.md)
 [![PDFs](https://img.shields.io/badge/PDFs-Alta%20Resolución%20Incluidos-success.svg)](.)
 
-Colección completa y exhaustiva de manuales técnicos profesionales para dominar el control de versiones con **Git** y todo el ecosistema colaborativo de **GitHub**, desde los fundamentos más elementales hasta flujos avanzados de CI/CD, productividad moderna, seguridad y resolución de incidentes críticos en producción.
+Colección completa y exhaustiva de manuales técnicos profesionales para dominar el control de versiones con **Git**, todo el ecosistema colaborativo de **GitHub**, y el desarrollo profesional de videojuegos con **Unity y GitHub**, desde los fundamentos más elementales hasta flujos avanzados de CI/CD, productividad moderna, seguridad y resolución de incidentes críticos en producción.
 
 Cada manual está **100% adaptado a las herramientas, rutas, gestores de credenciales y particularidades de su sistema operativo**, e incluye:
 - **Comandos listos para copiar y pegar** con explicación detallada de cada instrucción (`¿Qué hace este comando?`).
-- **Solución por temas a la edición concurrente del mismo archivo** (9 escenarios resueltos paso a paso).
+- **Solución por temas a la edición concurrente del mismo archivo** (escenarios resueltos paso a paso).
 - **Herramientas modernas de productividad** (Git Worktrees, Git Bisect & Blame, GitHub Codespaces, GitHub Copilot CLI, Pre-commit).
-- **Catálogo maestro de 10 incidentes reales en GitHub** (fuga de secretos, blobs >100MB, merges rotos en producción, rebases accidentales, bucles en Actions, ataques de Pwn Request, etc.).
+- **Catálogo maestro de incidentes reales** con guías de recuperación paso a paso.
 - Versiones en **Markdown (`.md`)** y en **PDF imprimible de alta resolución (`.pdf`)** con portadas dedicadas, estilo visual oscuro para terminales y tablas comparativas.
 
 ---
 
-## 📚 Índice de Manuales por Plataforma
+## 📚 Manuales Generales de GitHub por Plataforma
+
+Guías completas para desarrollo de software en general:
 
 | Sistema Operativo | Shell / Herramientas Clave | Manual Markdown | Documento PDF |
 | :--- | :--- | :---: | :---: |
 | **Debian GNU/Linux** | Bash, APT, `gh`, OpenSSH, GnuPG, Libsecret | [Ver Markdown](manual-github-debian-linux.md) | [Descargar PDF](manual-github-debian-linux.pdf) |
 | **Windows 10 / 11** | PowerShell 7+, Winget, GCM, OpenSSH, Posh-Git | [Ver Markdown](manual-github-powershell-windows.md) | [Descargar PDF](manual-github-powershell-windows.pdf) |
 | **macOS Apple Silicon** | Zsh, `/opt/homebrew`, Apple Keychain, Touch ID | [Ver Markdown](manual-github-macos-apple-silicon.md) | [Descargar PDF](manual-github-macos-apple-silicon.pdf) |
+
+---
+
+## 🎮 Manuales Especializados: Unity y GitHub en Producción (`UNITY/`)
+
+Ubicados en la carpeta [`UNITY/`](UNITY/), estos manuales abordan exhaustivamente las complejidades particulares del desarrollo de videojuegos con **Unity (2022 LTS y Unity 6)** y GitHub:
+
+| Sistema Operativo | Entorno / Herramientas Unity | Manual Markdown | Documento PDF |
+| :--- | :--- | :---: | :---: |
+| **Debian GNU/Linux** | Unity Hub Linux, Bash, Git LFS, UnityYAMLMerge, GameCI | [Ver Markdown](UNITY/manual-unity-github-debian-linux.md) | [Descargar PDF](UNITY/manual-unity-github-debian-linux.pdf) |
+| **Windows 10 / 11** | Unity Hub Windows, PowerShell 7+, GCM, UnityYAMLMerge.exe | [Ver Markdown](UNITY/manual-unity-github-powershell-windows.md) | [Descargar PDF](UNITY/manual-unity-github-powershell-windows.pdf) |
+| **macOS Apple Silicon** | Unity Hub Silicon, Zsh, Homebrew ARM64, UnityYAMLMerge, Metal | [Ver Markdown](UNITY/manual-unity-github-macos-apple-silicon.md) | [Descargar PDF](UNITY/manual-unity-github-macos-apple-silicon.pdf) |
+
+### Puntos Clave de la Guía de Unity:
+1. **Regla de Oro de los `.meta` y GUIDs:** Comprensión profunda de cómo Unity vincula scripts, texturas y componentes para evitar el temido error `"Missing Script"`.
+2. **Serialización YAML & Force Text:** Configuración obligatoria del editor para diffs legibles y resolubles por herramientas de fusión.
+3. **Gestión de Binarios con Git LFS:** Plantilla completa de `.gitattributes` con bloqueo concurrente (`git lfs lock`) para modelos 3D (FBX/OBJ/blend), texturas pesadas (PSD/EXR), audios y vídeos.
+4. **UnityYAMLMerge como Mergetool Semántico:** Integración del motor de fusión nativo de Unity en Git para resolver automáticamente conflictos en escenas (`.unity`) y prefabs (`.prefab`).
+5. **Arquitectura Multi-Scene Aditiva y Prefabs:** Técnicas profesionales de diseño para que equipos de artistas, diseñadores de niveles y programadores trabajen simultáneamente sin pisarse.
+6. **GameCI & CI/CD Automatizado:** Workflows de GitHub Actions para ejecutar suites de tests EditMode/PlayMode y compilar ejecutables standalone automáticamente.
+7. **Catálogo de 10 Incidentes Críticos en Unity:** Reparación de repositorios gigantes por subida accidental de `Library/`, archivos >100MB, desincronización de GUIDs, shaders magenta y procesos bloqueados.
 
 ---
 
@@ -173,14 +197,24 @@ git push -u origin nombre-rama
 
 ## 🛠️ Cómo Regenerar o Compilar los PDFs Localmente
 
-Este repositorio incluye el pipeline automatizado de compilación basado en Node.js, Marked, Highlight.js y el motor de impresión headless de Google Chrome:
+Este repositorio incluye un pipeline automatizado de compilación basado en Node.js, Marked, Highlight.js y el motor de impresión headless de Google Chrome:
 
 ```bash
 # 1. Instalar dependencias del compilador
 npm install
 
-# 2. Compilar los 3 manuales Markdown a PDF de alta resolución
-node compile-all.js
+# 2. Compilar todos los manuales (GitHub General + Unity) a PDF
+npm run build
+# O alternativamente:
+# node compile-all.js
+
+# 3. Compilar únicamente los manuales generales de GitHub
+npm run build:git
+
+# 4. Compilar únicamente los manuales especializados de Unity
+npm run build:unity
+# O alternativamente:
+# node UNITY/compile-unity-manuals.js
 ```
 
 ---
@@ -192,15 +226,25 @@ manualGit/
 ├── .gitignore                               # Exclusiones de Git y dependencias
 ├── README.md                                # Documentación principal del repositorio
 ├── LICENSE                                  # Licencia oficial MIT
-├── build-manuals.js                         # Motor de conversión Markdown -> HTML con estilos CSS
-├── compile-all.js                           # Script ejecutor para compilar los 3 PDFs
-├── package.json                             # Metadatos del proyecto y dependencias
-├── manual-github-debian-linux.md            # Manual completo para Debian GNU/Linux
-├── manual-github-debian-linux.pdf           # Versión PDF maquetada para Debian GNU/Linux
-├── manual-github-powershell-windows.md      # Manual completo para Windows PowerShell
-├── manual-github-powershell-windows.pdf     # Versión PDF maquetada para Windows PowerShell
-├── manual-github-macos-apple-silicon.md     # Manual completo para macOS Apple Silicon
-└── manual-github-macos-apple-silicon.pdf    # Versión PDF maquetada para macOS Apple Silicon
+├── build-manuals.js                         # Motor Markdown -> HTML -> PDF para GitHub
+├── compile-all.js                           # Orquestador para compilar todos los PDFs
+├── package.json                             # Metadatos del proyecto y scripts npm
+│
+├── manual-github-debian-linux.md            # Manual GitHub para Debian GNU/Linux
+├── manual-github-debian-linux.pdf           # PDF maquetado para Debian GNU/Linux
+├── manual-github-powershell-windows.md      # Manual GitHub para Windows PowerShell
+├── manual-github-powershell-windows.pdf     # PDF maquetado para Windows PowerShell
+├── manual-github-macos-apple-silicon.md     # Manual GitHub para macOS Apple Silicon
+├── manual-github-macos-apple-silicon.pdf    # PDF maquetado para macOS Apple Silicon
+│
+└── UNITY/                                   # Guías especializadas de Unity y GitHub
+    ├── compile-unity-manuals.js             # Compilador dedicado de PDFs para Unity
+    ├── manual-unity-github-debian-linux.md      # Manual Unity para Debian GNU/Linux
+    ├── manual-unity-github-debian-linux.pdf     # PDF Unity para Debian GNU/Linux
+    ├── manual-unity-github-powershell-windows.md  # Manual Unity para Windows PowerShell
+    ├── manual-unity-github-powershell-windows.pdf # PDF Unity para Windows PowerShell
+    ├── manual-unity-github-macos-apple-silicon.md # Manual Unity para macOS Apple Silicon
+    └── manual-unity-github-macos-apple-silicon.pdf# PDF Unity para macOS Apple Silicon
 ```
 
 ---

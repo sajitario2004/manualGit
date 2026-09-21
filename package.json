@@ -1,4 +1,12 @@
 {
+  "name": "manual-git-github-unity",
+  "version": "1.0.0",
+  "description": "Manuales completos de GitHub y Unity de Novato a Avanzado para Debian, Windows y macOS",
+  "scripts": {
+    "build:git": "node compile-all.js",
+    "build:unity": "node UNITY/compile-unity-manuals.js",
+    "build": "node compile-all.js"
+  },
   "dependencies": {
     "highlight.js": "^11.12.0",
     "marked": "^18.0.13"

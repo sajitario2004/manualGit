@@ -36,8 +36,13 @@ const manuals = [
   }
 ];
 
-console.log('Iniciando compilación de los 3 manuales a PDF...');
+console.log('Iniciando compilación de los 3 manuales generales de GitHub a PDF...');
 for (const m of manuals) {
   compileManual(m);
 }
-console.log('\n¡Todos los manuales PDF han sido generados exitosamente!');
+console.log('✓ Manuales generales de GitHub generados exitosamente.');
+
+console.log('\nIniciando compilación de los 3 manuales de Unity y GitHub a PDF...');
+require('./UNITY/compile-unity-manuals.js');
+
+console.log('\n🎉 ¡Todos los manuales PDF (GitHub General + Unity) han sido generados exitosamente!');
